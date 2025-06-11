@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import se.michaelthelin.spotify.model_objects.miscellaneous.CurrentlyPlaying;
+import se.michaelthelin.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
 import se.michaelthelin.spotify.model_objects.special.SnapshotResult;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.PagingCursorbased;
@@ -16,6 +18,8 @@ import se.michaelthelin.spotify.model_objects.specification.PlayHistory;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlayedTracksRequest;
+import se.michaelthelin.spotify.requests.data.player.GetInformationAboutUsersCurrentPlaybackRequest;
+import se.michaelthelin.spotify.requests.data.player.GetUsersCurrentlyPlayingTrackRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import se.michaelthelin.spotify.requests.data.playlists.ReorderPlaylistsItemsRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
@@ -31,7 +35,6 @@ import java.util.Map;
 import java.util.stream.*;
 
 import com.aleena.spotifytools.config.SpotifyConfig;
-import com.aleena.spotifytools.repository.UserProfileRepository;
 import com.aleena.spotifytools.service.UserProfileService;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,9 +63,24 @@ public class SpotifytoolsController {
     private User user = null;
 
     @Scheduled(fixedRate = 5000)
-    public void getSong(){
+    public void getSong() throws IOException{
         if(user != null){
-            System.out.println("working");
+            SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+            final GetInformationAboutUsersCurrentPlaybackRequest getInfo = spotifyApi.getInformationAboutUsersCurrentPlayback().build();
+            try{
+                final CurrentlyPlayingContext context = getInfo.execute();
+                if(context.getIs_playing()){
+                    final GetUsersCurrentlyPlayingTrackRequest currentTrack = spotifyApi.getUsersCurrentlyPlayingTrack().build();
+                    final CurrentlyPlaying currentlyPlaying = currentTrack.execute();
+                    if(!songUri.equals(currentlyPlaying.getItem().getId())){
+                        songUri = currentlyPlaying.getItem().getId();
+                        System.out.println(currentlyPlaying.getItem().getName());
+                    }
+                }
+            }catch(Exception e){
+                System.out.println("Error: " + e.getMessage());
+            }
+
         }
     }
 
@@ -76,7 +94,7 @@ public class SpotifytoolsController {
     public void spotifyLogin(HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         AuthorizationCodeUriRequest authCodeUriReq = spotifyApi.authorizationCodeUri()
-        .scope("user-read-recently-played, user-read-currently-playing, playlist-read-private, playlist-modify-public, playlist-modify-private, user-read-email")
+        .scope("user-read-playback-state,user-read-recently-played, user-read-currently-playing, playlist-read-private, playlist-modify-public, playlist-modify-private, user-read-email")
         .show_dialog(true)
         .build();
 
