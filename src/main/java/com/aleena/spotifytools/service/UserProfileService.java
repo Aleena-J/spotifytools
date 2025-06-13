@@ -12,8 +12,8 @@ public class UserProfileService {
     private UserProfileRepository userProfileRepository;
 
 
-    public void insertOrUpdateProfile(String id){
-        UserProfile userProfile = new UserProfile(id);
+    public void insertOrUpdateProfile(String id, String access, String refresh){
+        UserProfile userProfile = new UserProfile(id, access, refresh);
         userProfileRepository.save(userProfile);
     }
 }

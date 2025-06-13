@@ -8,4 +8,5 @@ import com.aleena.spotifytools.entity.UserProfile;
 
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
     UserProfile findByUserId(String userId);
+    boolean existsByUserId(String userId);
 }

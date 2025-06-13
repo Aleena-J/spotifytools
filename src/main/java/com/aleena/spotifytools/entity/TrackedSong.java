@@ -1,5 +1,7 @@
 package com.aleena.spotifytools.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +37,13 @@ public class TrackedSong {
     @Column(name = "ARTISTS")
     private String artists;
 
-    public TrackedSong(String songId, String songName, String artists){
+    @Column(name = "TIME_PLAYED")
+    private LocalDateTime date;
+
+    public TrackedSong(String songId, String songName, String artists, LocalDateTime date){
         this.songId = songId;
         this.songName = songName;
         this.artists = artists;
+        this.date = date;
     }
 }
