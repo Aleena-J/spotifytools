@@ -21,6 +21,8 @@ public class RedirectService {
     private UserProfileService userProfileService;
     @Autowired
     private UserProfileRepository userProfileRepository;
+    
+    String id;
 
     public String getDetails(String code, SpotifyApi spotifyApi) throws IOException {
         AuthorizationCodeRequest authCodeReq = spotifyApi.authorizationCode(code).build();
@@ -34,12 +36,13 @@ public class RedirectService {
 
             final GetCurrentUsersProfileRequest getProfileReq = spotifyApi.getCurrentUsersProfile().build();
             User user = getProfileReq.execute();
+            id = user.getId();
             if(!userProfileRepository.existsByUserId(user.getId())){
                 userProfileService.insertOrUpdateProfile(user.getId(), authCodeCreds.getAccessToken(), authCodeCreds.getRefreshToken());
             }
         }catch(Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
-        return "get-recently-played";
+        return id;
     }
 }

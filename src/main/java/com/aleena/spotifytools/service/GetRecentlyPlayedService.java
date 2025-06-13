@@ -2,7 +2,11 @@ package com.aleena.spotifytools.service;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.aleena.spotifytools.entity.UserProfile;
+import com.aleena.spotifytools.repository.UserProfileRepository;
 
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
@@ -13,8 +17,21 @@ import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlay
 
 @Service
 public class GetRecentlyPlayedService {
-    public String recentlyPlayed(SpotifyApi spotifyApi) {
+
+    @Autowired
+    UserProfileRepository profileRepository;
+
+    public String recentlyPlayed(SpotifyApi spotifyApi, String userId) {
         String songList = "";
+
+
+        if(profileRepository.existsByUserId(userId)){
+            UserProfile user = profileRepository.findByUserId(userId);
+            spotifyApi.setAccessToken(user.getAccessToken());
+            spotifyApi.setRefreshToken(user.getRefreshToken());
+        }else{
+            return "false";
+        }
         
         final GetCurrentUsersRecentlyPlayedTracksRequest getRecentTracksReq = spotifyApi.getCurrentUsersRecentlyPlayedTracks().after(new Date(1484811043508L)).limit(50).build();
 
