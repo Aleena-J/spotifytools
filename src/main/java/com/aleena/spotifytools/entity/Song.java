@@ -1,21 +1,15 @@
 package com.aleena.spotifytools.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-
-
 
 @Entity
 @Table(name = "SONGS")
@@ -23,27 +17,26 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class TrackedSong {
+public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "SONG_ID")
-    private String songId;
-
-    @Column(name = "SONG")
+    @Column(name = "TITLE", columnDefinition = "TEXT", nullable = false)
     private String songName;
 
-    @Column(name = "ARTISTS")
+    @Column(name = "ARTISTS", columnDefinition = "TEXT", nullable = false)
     private String artists;
 
-    @Column(name = "TIME_PLAYED")
-    private LocalDateTime date;
+    @Column(name = "SONG_ID", columnDefinition = "TEXT", nullable = false, unique = true)
+    private String songId;
+    
+    public Song() {}
 
-    public TrackedSong(String songId, String songName, String artists, LocalDateTime date){
-        this.songId = songId;
+    public Song(String songName, String artists, String songId){
         this.songName = songName;
         this.artists = artists;
-        this.date = date;
+        this.songId = songId;
     }
+
 }

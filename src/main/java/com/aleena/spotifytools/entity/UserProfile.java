@@ -28,7 +28,7 @@ public class UserProfile{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "USER_ID", unique = true, nullable = false)
+    @Column(name = "USER_ID", unique = true, nullable = false, updatable = false)
     private String userId;
 
     @Column(name = "ACCESS_TOKEN", columnDefinition = "TEXT", nullable = false)

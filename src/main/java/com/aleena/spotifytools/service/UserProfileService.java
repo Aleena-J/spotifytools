@@ -13,7 +13,18 @@ public class UserProfileService {
 
 
     public void insertOrUpdateProfile(String id, String access, String refresh){
-        UserProfile userProfile = new UserProfile(id, access, refresh);
+        UserProfile userProfile;
+        if(userProfileRepository.existsByUserId(id)){
+            userProfile = userProfileRepository.findByUserId(id);
+        }else{
+            userProfile = null;
+        }
+        if(userProfile != null){
+            userProfile.setAccessToken(access);
+            userProfile.setRefreshToken(refresh);
+        }else{
+            userProfile = new UserProfile(id, access, refresh);
+        }
         userProfileRepository.save(userProfile);
     }
 }
