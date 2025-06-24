@@ -16,11 +16,15 @@ public class SpotifyConfig {
     @Value("${spotify.clientSecret}")
     private String clientSecret;
 
+
+    @Value("${redirect.server.ip}")
+    private String redirectUri;
+
     public SpotifyApi spotifyApi(){
         return new SpotifyApi.Builder()
         .setClientId(clientId)
         .setClientSecret(clientSecret)
-        .setRedirectUri(java.net.URI.create("http://127.0.0.1:8080/callback"))
+        .setRedirectUri(java.net.URI.create(redirectUri))
         .build();
     }
 }

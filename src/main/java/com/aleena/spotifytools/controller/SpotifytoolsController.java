@@ -3,25 +3,27 @@ package com.aleena.spotifytools.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 
 import com.aleena.spotifytools.config.SpotifyConfig;
 import com.aleena.spotifytools.service.GetRecentlyPlayedService;
-import com.aleena.spotifytools.service.GetUserRecentSongsService;
+import com.aleena.spotifytools.service.GetRepeatsService;
 import com.aleena.spotifytools.service.LoginService;
 import com.aleena.spotifytools.service.RedirectService;
+import com.aleena.spotifytools.service.SkippedSongsTrackService;
 import com.aleena.spotifytools.service.SortByPopularityService;
-
-import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
 import se.michaelthelin.spotify.SpotifyApi;
+
 
 
 @RestController
@@ -36,6 +38,10 @@ public class SpotifytoolsController {
     private RedirectService redirectService;
     @Autowired
     private SortByPopularityService sortByPopularityService;
+    @Autowired
+    private SkippedSongsTrackService skippedSongsTrackService;
+    @Autowired
+    private GetRepeatsService repeatsService;
 
     @GetMapping("/login")
     @ResponseBody
@@ -55,7 +61,7 @@ public class SpotifytoolsController {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(60 * 60 * 24 * 365 * 10);
         response.addCookie(cookie);
-        response.sendRedirect("get-recently-played");
+        response.sendRedirect("repeats");
     }
     
     //TODO: Redirect for when noID
@@ -67,10 +73,34 @@ public class SpotifytoolsController {
     }
 
 
-    @GetMapping("sort-playlist-popularity")
+    @PostMapping("sort-playlist-popularity")
     public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return sortByPopularityService.sortByPop(spotifyApi, userId);
     }
+
+    @GetMapping("repeats")
+    public String getUserRepeats(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        return repeatsService.repeats(spotifyApi, userId);
+    }
+
+    @GetMapping("skips")
+    public String getUserSkips(@RequestParam String param) {
+        return new String();
+    }
+    
+    @DeleteMapping("delete-account")
+    public String deleteUser(@CookieValue(value = "userId", defaultValue = "noID") String userId){
+        return new String();
+    }
+    
+
+    @PostMapping("track-skip")
+    public String trackUserSkip(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        return skippedSongsTrackService.trackSkip(spotifyApi, userId);
+    }
+    
   
 }

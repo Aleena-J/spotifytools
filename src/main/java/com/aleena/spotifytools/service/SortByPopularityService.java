@@ -36,7 +36,7 @@ public class SortByPopularityService {
         Integer offset = 0;
         Integer limit = 100;
         Boolean nextExists = true;
-        //TODO: Edit to not be hardcoded, take in frontend link
+        //TODO: Edit to not be hardcoded, take in frontend link and check for playlist length
         String playlistLink = "23AEJGM7I3eVjbAR7gWOMt";
 
         Map<Integer, Integer> playlistVals = new HashMap<>();
@@ -50,7 +50,7 @@ public class SortByPopularityService {
             spotifyApi.setAccessToken(user.getAccessToken());
             spotifyApi.setRefreshToken(user.getRefreshToken());
         }else{
-            return "false";
+            return "Sorting unsuccessful";
         }
 
 
@@ -105,7 +105,7 @@ public class SortByPopularityService {
                     insert++;
                 }
                 
-                return tracks;
+                return "Sorting successful";
             }catch(Exception e){
                 if(count == maxTries){
                     return ("Error :" + e.getMessage());
