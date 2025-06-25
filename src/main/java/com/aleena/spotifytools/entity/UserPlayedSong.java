@@ -15,12 +15,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import jakarta.persistence.UniqueConstraint;
 
 
 
 
 @Entity
-@Table(name = "SONGS_PLAYED")
+@Table(name = "SONGS_PLAYED", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"USER", "SONG", "DATE"})
+})
 @Getter
 @Setter
 @ToString

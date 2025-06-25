@@ -36,7 +36,7 @@ public class SortByPopularityService {
         Integer offset = 0;
         Integer limit = 100;
         Boolean nextExists = true;
-        //TODO: Edit to not be hardcoded, take in frontend link and check for playlist length
+        //TODO: Edit to not be hardcoded, take in frontend link and check for playlist length, need frontend
         String playlistLink = "23AEJGM7I3eVjbAR7gWOMt";
 
         Map<Integer, Integer> playlistVals = new HashMap<>();

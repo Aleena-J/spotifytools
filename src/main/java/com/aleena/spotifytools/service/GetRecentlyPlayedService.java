@@ -16,7 +16,7 @@ import se.michaelthelin.spotify.model_objects.specification.PlayHistory;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
 import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlayedTracksRequest;
 
-
+//TODO: Delete eventually, used for testing
 @Service
 public class GetRecentlyPlayedService {
 
@@ -35,7 +35,7 @@ public class GetRecentlyPlayedService {
             spotifyApi.setAccessToken(user.getAccessToken());
             spotifyApi.setRefreshToken(user.getRefreshToken());
         }else{
-            return "false";
+            return "Error: Unable to find user";
         }
         
         final GetCurrentUsersRecentlyPlayedTracksRequest getRecentTracksReq = spotifyApi.getCurrentUsersRecentlyPlayedTracks().after(new Date(1484811043508L)).limit(50).build();

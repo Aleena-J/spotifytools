@@ -54,6 +54,12 @@ public class SpotifytoolsController {
         }
     }
 
+    @PostMapping("/logout")
+    @ResponseBody
+    public void logout(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
+        
+    }
+
     @GetMapping("/callback")
     public void getUserDetails(@RequestParam("code") String userCode, HttpServletResponse response) throws IOException {
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
@@ -81,12 +87,11 @@ public class SpotifytoolsController {
 
     @GetMapping("repeats")
     public String getUserRepeats(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
-        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        return repeatsService.repeats(spotifyApi, userId);
+        return repeatsService.repeats(userId);
     }
 
     @GetMapping("skips")
-    public String getUserSkips(@RequestParam String param) {
+    public String getUserSkips(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
         return new String();
     }
     

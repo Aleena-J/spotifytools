@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +16,7 @@ import com.aleena.spotifytools.repository.SongRepository;
 import com.aleena.spotifytools.repository.UserPlayedSongRepository;
 import com.aleena.spotifytools.repository.UserProfileRepository;
 import com.aleena.spotifytools.config.SpotifyConfig;
+import com.aleena.spotifytools.entity.Song;
 import com.aleena.spotifytools.entity.UserProfile;
 
 import se.michaelthelin.spotify.SpotifyApi;
@@ -77,8 +80,17 @@ public class GetUserRecentSongsService {
                             songService.insertSong(songName, artists, songId);
                         }
 
+                        Song song = songRepository.findBySongId(songId);
+
                         LocalDateTime datePlayed = LocalDateTime.ofInstant(item.getPlayedAt().toInstant(), ZoneId.systemDefault());
-                        songUserPlayedService.insertSong(userList.get(i), songRepository.findBySongId(songId), datePlayed);
+                        Set<String> inserted = new HashSet<>();
+                        
+                        String songKey = userList.get(i).getUserId() + "-" + songId + "-" + datePlayed.toString();
+
+                        if (!inserted.contains(songKey) && !songUserPlayedRepository.existsByUserAndSongAndDate(userList.get(i), song, datePlayed)) {
+                            songUserPlayedService.insertSong(userList.get(i), song, datePlayed);
+                            inserted.add(songKey);
+                        }
                     }
                     break;
                 }catch (Exception e) {

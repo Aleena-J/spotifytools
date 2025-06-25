@@ -22,7 +22,7 @@ public class RedirectService {
     @Autowired
     private UserProfileRepository userProfileRepository;
     
-    String id;
+    String id = "noID";
 
     public String getDetails(String code, SpotifyApi spotifyApi) throws IOException {
         AuthorizationCodeRequest authCodeReq = spotifyApi.authorizationCode(code).build();
