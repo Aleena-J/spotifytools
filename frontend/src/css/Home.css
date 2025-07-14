@@ -1,9 +1,38 @@
 .welcome-body{
-    background-color: rgb(34, 32, 32);
+    color:black;
+    text-align: center;
 }
 
 
 .welcome-text{
-    color:white;
+    font-size: 80px;
     text-align: center;
+    padding:30px;
+    margin:auto;
 }
+
+.kendall-gif{
+    display: block;
+    margin: auto;
+    padding: 30px;
+}
+
+.loginButton{
+    background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
+    color: white;
+    text-shadow: black 0px 0px 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    display: block;
+    border-radius: 12px;
+    padding: 20px;
+    margin: auto;
+}
+
+.loginButton:hover{
+    background-image: linear-gradient(to bottom right, #ffffff , #919793);
+    border-color: #1DB954;
+}
+
+

@@ -8,25 +8,27 @@ body{
 .navbar {
     background-color: #1DB954;
     background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 2px 3px gray, 0 0 0 1px gray;
+    box-shadow: 0 2px 3px gray, 0 0 0 1px gray; 
 }
 
 
 
 
 .navbar-brand {
-  font-size: 40px;
-  font-weight: bold;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: black;
-  text-shadow: white 2px 0px 15px;
+    padding-left: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: black;
+  /* text-shadow: white 2px 0px 15px; */
 }
 
 .brand-link {
     text-decoration: none;
+    color: black
 }
 
 .brand-link:visited {
@@ -45,15 +47,16 @@ body{
 .navbar-links {
     display: flex;
     gap: 50px;
-    font-size: 20px;
+    font-size: 16px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    text-shadow: white 2px 0px 15px;
+    /* text-shadow: white 2px 0px 15px; */
     font-weight: bold;
 }
 
 .nav-link {
     padding: 10px;
     text-decoration: none;
+    color: black
 }
 
 .nav-link:visited {

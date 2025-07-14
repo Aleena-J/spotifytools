@@ -41,7 +41,7 @@ public class RedirectService {
                 userProfileService.insertOrUpdateProfile(user.getId(), authCodeCreds.getAccessToken(), authCodeCreds.getRefreshToken());
             }
         }catch(Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error: RedirectService --- " + e.getMessage());
         }
         return id;
     }

@@ -2,16 +2,24 @@ package com.aleena.spotifytools.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.aleena.spotifytools.config.SpotifyConfig;
+import com.aleena.spotifytools.dto.SongDTO;
+import com.aleena.spotifytools.entity.Song;
 import com.aleena.spotifytools.service.GetRecentlyPlayedService;
 import com.aleena.spotifytools.service.GetRepeatsService;
 import com.aleena.spotifytools.service.LoginService;
@@ -25,8 +33,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import se.michaelthelin.spotify.SpotifyApi;
 
 
-
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:5173", allowCredentials = "true")
 public class SpotifytoolsController {
     @Autowired
     private SpotifyConfig spotifyConfig;
@@ -44,33 +52,35 @@ public class SpotifytoolsController {
     private GetRepeatsService repeatsService;
 
     @GetMapping("/login")
-    @ResponseBody
-    public void spotifyLogin(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
-        if(userId.equals("noID")){
-            SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-            response.sendRedirect(loginService.spotifyLogin(spotifyApi));
-        }else{
-            response.sendRedirect("get-recently-played");
-        }
+    public String spotifyLogin() throws IOException{
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        String authUrl = loginService.spotifyLogin(spotifyApi);
+        return authUrl;
     }
+
+    @PostMapping("/callback")
+    public void getUserDetails(@RequestBody String code, HttpServletResponse response) throws IOException{
+        String userCode = code;
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        String userId = redirectService.getDetails(userCode, spotifyApi);
+        Cookie cookie = new Cookie("userId", userId);
+        cookie.setHttpOnly(false);
+        //TODO: SET TRUE
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookie);
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
 
     @PostMapping("/logout")
     @ResponseBody
-    public void logout(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
+    public void logout(@CookieValue(value = "userId", defaultValue = "noID") String userId) throws IOException{
         
     }
 
-    @GetMapping("/callback")
-    public void getUserDetails(@RequestParam("code") String userCode, HttpServletResponse response) throws IOException {
-        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        Cookie cookie = new Cookie("userId", redirectService.getDetails(userCode, spotifyApi));
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(60 * 60 * 24 * 365 * 10);
-        response.addCookie(cookie);
-        response.sendRedirect("repeats");
-    }
     
-    //TODO: Redirect for when noID
 
     @GetMapping("get-recently-played")
     public String getRecentlyPlayed(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
@@ -86,7 +96,7 @@ public class SpotifytoolsController {
     }
 
     @GetMapping("repeats")
-    public String getUserRepeats(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+    public List<SongDTO> getUserRepeats(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
         return repeatsService.repeats(userId);
     }
 
