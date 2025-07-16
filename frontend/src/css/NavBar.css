@@ -1,17 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+
+
 body{
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     margin:0;
     padding: 0;
 }
 
 
 .navbar {
-    background-color: #1DB954;
-    background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
+    background-color: #000000;
+    background-image: linear-gradient(to bottom right, #000000 , #1a1b1b);
     padding: 10px;
+    box-shadow: 0 2px 3px gray, 0 0 0 1px gray; 
+    width: 100%;
+    overflow: hidden;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 2px 3px gray, 0 0 0 1px gray; 
+    flex-wrap: wrap;
 }
 
 
@@ -20,19 +28,18 @@ body{
 .navbar-brand {
     padding-left: 20px;
     font-size: 30px;
-    font-weight: bold;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: black;
+    color: white;
   /* text-shadow: white 2px 0px 15px; */
 }
 
 .brand-link {
     text-decoration: none;
-    color: black
+    color: white;
 }
 
 .brand-link:visited {
-    color: black;
+    color: white;
 }
 
 .brand-link:active {
@@ -56,11 +63,11 @@ body{
 .nav-link {
     padding: 10px;
     text-decoration: none;
-    color: black
+    color: white
 }
 
 .nav-link:visited {
-    color: black;
+    color: white;
 }
 
 .nav-link:active {

@@ -6,6 +6,7 @@ function UserRepeats() {
     const [isLoggedIn, setLogIn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [repeatedSongs, setRepeatedSongs] = useState([])
+    const [selectedTime, setSelectedTime] = useState("today")
 
     useEffect(() => {
         if (!loading && !isLoggedIn) {
@@ -47,13 +48,119 @@ function UserRepeats() {
             <h1>Loading...</h1>
         ) : (
             <>
-                <h2>Your repeats</h2>
+                <h1 className='repeatHeading'>Your repeats</h1>
                 
-                <ul>
-                    {repeatedSongs.map((song, index) => (
-                        <li key={index}>{song.songName} — {song.artists} — {song.repeats} Repeats</li>
+
+                <button className={`tabs${selectedTime === "today" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("today")}>Today</button>
+                <button className={`tabs${selectedTime === "week" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("week")}>This Week</button>
+                <button className={`tabs${selectedTime === "month" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("month")}>This Month</button>
+                <button className={`tabs${selectedTime === "lastmonth" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("lastmonth")}>Last Month</button>
+
+
+
+                <ol className={`repeats${selectedTime === "today" ? "-active" : "" }`} >
+                    {repeatedSongs
+                    .filter((song) => song.dateType === "today")
+                    .map((song, index) => (
+                        <li className="repeatedSong" key={index}>
+                            <img className="song-image" src={song.imageUrl}/>
+                            <div className="song-info">
+                                <div className="song-text">
+                                    <div className="truncate">Title: {song.songName}</div>
+                                    <div className="truncate">Artist(s): {song.artists}</div>
+                                    <div className="truncate">Album: {song.album}</div>
+                                    <div>Repeats: {song.repeats}</div>
+                                </div>
+                                <a
+                                className="spotifyRedirect"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={song.songUrl}
+                                >
+                                Spotify
+                                </a>
+                            </div>
+                        </li>
                     ))}
-                </ul>
+                </ol>
+
+                <ol className={`repeats${selectedTime === "week" ? "-active" : "" }`}>
+                    {repeatedSongs
+                    .filter((song) => song.dateType === "week")
+                    .map((song, index) => (
+                        <li className="repeatedSong" key={index}>
+                            <img className="song-image" src={song.imageUrl}/>
+                            <div className="song-info">
+                                <div className="song-text">
+                                    <div className="truncate">Title: {song.songName}</div>
+                                    <div className="truncate">Artist(s): {song.artists}</div>
+                                    <div className="truncate">Album: {song.album}</div>
+                                    <div>Repeats: {song.repeats}</div>
+                                </div>
+                                <a
+                                className="spotifyRedirect"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={song.songUrl}
+                                >
+                                Spotify
+                                </a>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+
+                <ol className={`repeats${selectedTime === "month" ? "-active" : "" }`}>
+                    {repeatedSongs
+                    .filter((song) => song.dateType === "month")
+                    .map((song, index) => (
+                        <li className="repeatedSong" key={index}>
+                            <img className="song-image" src={song.imageUrl}/>
+                            <div className="song-info">
+                                <div className="song-text">
+                                    <div className="truncate">Title: {song.songName}</div>
+                                    <div className="truncate">Artist(s): {song.artists}</div>
+                                    <div className="truncate">Album: {song.album}</div>
+                                    <div>Repeats: {song.repeats}</div>
+                                </div>
+                                <a
+                                className="spotifyRedirect"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={song.songUrl}
+                                >
+                                Spotify
+                                </a>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+
+                <ol className={`repeats${selectedTime === "lastmonth" ? "-active" : "" }`}>
+                    {repeatedSongs
+                    .filter((song) => song.dateType === "lastmonth")
+                    .map((song, index) => (
+                        <li className="repeatedSong" key={index}>
+                            <div className="song-info">
+                                <div className="song-text">
+                                    <div className="truncate">Title: {song.songName}</div>
+                                    <div className="truncate">Artist(s): {song.artists}</div>
+                                    <div className="truncate">Album: {song.album}</div>
+                                    <div>Repeats: {song.repeats}</div>
+                                </div>
+                                <a
+                                className="spotifyRedirect"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={song.songUrl}
+                                >
+                                Spotify
+                                </a>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+                
             </>
         )}
     </div>

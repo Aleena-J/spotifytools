@@ -9,12 +9,23 @@
     text-align: center;
     padding:30px;
     margin:auto;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .kendall-gif{
     display: block;
     margin: auto;
     padding: 30px;
+}
+
+.loginText{
+    font-size: 80px;
+    text-align: center;
+    padding:30px;
+    margin:auto;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .loginButton{
@@ -31,8 +42,8 @@
 }
 
 .loginButton:hover{
-    background-image: linear-gradient(to bottom right, #ffffff , #919793);
-    border-color: #1DB954;
+    background-image: linear-gradient(to bottom right, #70d493 , #52db82);
+    border-color: black;
 }
 
 

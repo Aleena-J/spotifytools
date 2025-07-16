@@ -81,7 +81,7 @@ public class SpotifytoolsController {
     }
 
     
-
+    //TODO: Delete eventually
     @GetMapping("get-recently-played")
     public String getRecentlyPlayed(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();

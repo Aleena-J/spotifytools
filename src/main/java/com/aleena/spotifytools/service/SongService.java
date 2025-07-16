@@ -11,8 +11,8 @@ public class SongService {
     @Autowired
     SongRepository songRepository;
 
-    public void insertSong(String songName, String artists, String songId){
-        Song song = new Song(songName, artists, songId);
+    public void insertSong(String songName, String artists, String songId, String imageUrl, String album, String spotifyLink){
+        Song song = new Song(songName, artists, songId, imageUrl, album, spotifyLink);
         songRepository.save(song);
     }
 }

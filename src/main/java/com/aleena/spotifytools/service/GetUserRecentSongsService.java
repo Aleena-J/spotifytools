@@ -22,6 +22,7 @@ import com.aleena.spotifytools.entity.UserProfile;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.Image;
 import se.michaelthelin.spotify.model_objects.specification.PagingCursorbased;
 import se.michaelthelin.spotify.model_objects.specification.PlayHistory;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
@@ -51,7 +52,8 @@ public class GetUserRecentSongsService {
     @Autowired
     SpotifyConfig spotifyConfig;
 
-    @Scheduled(fixedRate = 30000) //every 30s get all users' recently played and store new songs
+    //TODO: CHANGE TO 24 MINS WHEN NOT TESTING
+    @Scheduled(fixedRate = 30000) //every 24min get all users' recently played and store new songs
     public void getSong() throws IOException{
         int maxTries = 1;
         List<UserProfile> userList =  profileRepository.findAll();
@@ -70,6 +72,9 @@ public class GetUserRecentSongsService {
 
                     for(PlayHistory item : history){
                         String songId = item.getTrack().getId();
+                        String imageUrl = item.getTrack().getAlbum().getImages()[0].getUrl();
+                        String albumName = item.getTrack().getAlbum().getName();
+                        String songLink = item.getTrack().getExternalUrls().get("spotify");
                         String songName = item.getTrack().getName();
                         String artists = "";
                         for(ArtistSimplified artist : item.getTrack().getArtists()){
@@ -77,7 +82,7 @@ public class GetUserRecentSongsService {
                         }
                         artists = artists.substring(0, artists.length()-2);
                         if(!songRepository.existsBySongId(songId)){
-                            songService.insertSong(songName, artists, songId);
+                            songService.insertSong(songName, artists, songId, imageUrl, albumName, songLink);
                         }
 
                         Song song = songRepository.findBySongId(songId);

@@ -29,7 +29,7 @@ function Home() {
         <div className="welcome-body">
             <h1 className='welcome-text'>Welcome!</h1>
             <img src={gif} className='kendall-gif'/>
-            {isLoggedIn ? <h2>You are logged in!</h2> : <button className="loginButton" onClick={getSpotifyLogin}>Login</button>}
+            {isLoggedIn ? <h2 className='loginText'>You are logged in!</h2> : <button className="loginButton" onClick={getSpotifyLogin}>Login</button>}
         </div>
     );
 }
