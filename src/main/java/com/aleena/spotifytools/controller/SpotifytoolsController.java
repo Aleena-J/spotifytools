@@ -16,6 +16,7 @@ import java.util.List;
 import com.aleena.spotifytools.config.SpotifyConfig;
 import com.aleena.spotifytools.dto.PlaylistDTO;
 import com.aleena.spotifytools.dto.SongDTO;
+import com.aleena.spotifytools.dto.SortRequestDTO;
 import com.aleena.spotifytools.service.GetRecentlyPlayedService;
 import com.aleena.spotifytools.service.GetRepeatsService;
 import com.aleena.spotifytools.service.GetUsersPlaylistsService;
@@ -101,9 +102,9 @@ public class SpotifytoolsController {
     
 
     @PostMapping("sort-playlist-popularity")
-    public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody String playlistLink, @RequestBody String method, HttpServletResponse response) throws IOException{
+    public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody SortRequestDTO request, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        return sortByPopularityService.sortByPop(spotifyApi, userId, playlistLink, method);
+        return sortByPopularityService.sortByPop(spotifyApi, userId, request.getPlaylistLink(), request.getMethod());
     }
 
     @GetMapping("repeats")

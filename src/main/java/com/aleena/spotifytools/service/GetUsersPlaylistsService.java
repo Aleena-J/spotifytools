@@ -63,7 +63,7 @@ public class GetUsersPlaylistsService {
                         PlaylistSimplified[] items = playlistPaging.getItems();
 
                         for(int i = 0; i < items.length; i++){
-                            PlaylistDTO playlist = new PlaylistDTO(items[i].getId(), items[i].getImages()[0].getUrl(), items[i].getName(), items[i].getTracks().getTotal());
+                            PlaylistDTO playlist = new PlaylistDTO(items[i].getId(), items[i].getImages()[0].getUrl(), items[i].getName(), items[i].getTracks().getTotal(), items[i].getOwner().getDisplayName(), items[i].getExternalUrls().get("spotify"));
                             playlists.add(playlist);
                         }
                     }

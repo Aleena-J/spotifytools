@@ -1,8 +1,6 @@
 * {
     box-sizing: border-box;
-}
-
-.repeat-body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     color:black;
     margin: 0;
     padding: 0;
@@ -15,7 +13,6 @@
     padding:20px;
     margin:auto;
     font-weight: bold;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-decoration: underline;
     width:100%
 }
@@ -25,7 +22,6 @@
     display: inline;
     width:25%;
     padding:15px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
     border: 1px solid black;
     margin: auto;
@@ -43,7 +39,6 @@
     border-color: black;
     width:25%;
     padding:15px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
     border: 1px solid black;
     margin: auto;
@@ -66,7 +61,6 @@ ol{
 }
 
 .repeatedSong{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     padding:3px;
     list-style-type: none;
     margin-left: 0;
