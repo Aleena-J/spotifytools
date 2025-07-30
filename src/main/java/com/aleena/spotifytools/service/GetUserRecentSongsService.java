@@ -2,7 +2,7 @@ package com.aleena.spotifytools.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +20,9 @@ import com.aleena.spotifytools.entity.Song;
 import com.aleena.spotifytools.entity.UserProfile;
 
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.detailed.TooManyRequestsException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
-import se.michaelthelin.spotify.model_objects.specification.Image;
 import se.michaelthelin.spotify.model_objects.specification.PagingCursorbased;
 import se.michaelthelin.spotify.model_objects.specification.PlayHistory;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
@@ -87,7 +87,8 @@ public class GetUserRecentSongsService {
 
                         Song song = songRepository.findBySongId(songId);
 
-                        LocalDateTime datePlayed = LocalDateTime.ofInstant(item.getPlayedAt().toInstant(), ZoneId.systemDefault());
+                        LocalDateTime datePlayed = LocalDateTime.ofInstant(item.getPlayedAt().toInstant(), ZoneOffset.UTC);
+
                         Set<String> inserted = new HashSet<>();
                         
                         String songKey = userList.get(i).getUserId() + "-" + songId + "-" + datePlayed.toString();
@@ -98,7 +99,20 @@ public class GetUserRecentSongsService {
                         }
                     }
                     break;
-                }catch (Exception e) {
+                } catch (TooManyRequestsException e) {
+                    int retryTime = e.getRetryAfter();
+                    try {
+                        System.out.println("Rate limited: Waiting " + retryTime + "s");
+                        Thread.sleep(retryTime * 1000L);
+                        continue;
+                    } catch (InterruptedException | NumberFormatException ex) {
+                        System.err.println("Invalid Retry-After. Waiting 5s");
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ignore) {}
+                        continue;
+                    }
+                } catch (Exception e) {
                     if(count == maxTries){
                         break;
                     }else{
@@ -117,5 +131,3 @@ public class GetUserRecentSongsService {
         }
     }
 }
-
-

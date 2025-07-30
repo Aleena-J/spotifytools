@@ -1,26 +1,33 @@
 package com.aleena.spotifytools.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aleena.spotifytools.entity.UserProfile;
 import com.aleena.spotifytools.repository.UserProfileRepository;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.detailed.TooManyRequestsException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.model_objects.special.SnapshotResult;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
+import se.michaelthelin.spotify.model_objects.specification.Playlist;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
+import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
+import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
+import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
+import se.michaelthelin.spotify.requests.data.playlists.RemoveItemsFromPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.ReorderPlaylistsItemsRequest;
+import se.michaelthelin.spotify.requests.data.playlists.ReplacePlaylistsItemsRequest;
 
 
 @Service
@@ -31,19 +38,16 @@ public class SortByPopularityService {
     @Autowired
     UserProfileRepository profileRepository;
 
-    public String sortByPop(SpotifyApi spotifyApi, String userId) {
-        String tracks =  "empty";
+    //String method
+    public String sortByPop(SpotifyApi spotifyApi, String userId, String playlistLink, String method) {
+        String snapshotId = "empty"; 
         Integer offset = 0;
         Integer limit = 100;
         Boolean nextExists = true;
-        //TODO: Edit to not be hardcoded, take in frontend link and check for playlist length, need frontend
-        String playlistLink = "23AEJGM7I3eVjbAR7gWOMt";
+        
 
-        Map<Integer, Integer> playlistVals = new HashMap<>();
-
-        int currentIt = 0;
-        int count = 0;
-        int maxTries = 1;
+        int refreshAttempts = 0;
+        final int maxRetries = 3;
 
         if(profileRepository.existsByUserId(userId)){
             UserProfile user = profileRepository.findByUserId(userId);
@@ -53,7 +57,10 @@ public class SortByPopularityService {
             return "Sorting unsuccessful";
         }
 
-
+        List<Track> trackList = new ArrayList<>();
+        List<String> trackUris = new ArrayList<>();
+        
+        
         //get next batch of tracks if needed, then each tracks URI and popularity
         while(true){
             try{
@@ -75,52 +82,142 @@ public class SortByPopularityService {
 
                     for(int i = 0; i < items.length; i++){
                         Track track = (Track)items[i].getTrack();
-                        playlistVals.put(i + currentIt, track.getPopularity());
+                        trackList.add(track);
+                        trackUris.add(track.getUri());
                     }
-                    currentIt += 100;
                 }
 
-                //sort map by popularity
-                //https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values
-                Map<Integer, Integer> sorted = playlistVals
-                .entrySet().stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-                
-                int insert = 0;
 
-                for(Map.Entry<Integer, Integer> entry : sorted.entrySet()){
-                    if(tracks.equals("empty")){
-                        System.out.println(entry.getKey() + " " + insert);
-                        final ReorderPlaylistsItemsRequest reorderReq = spotifyApi.reorderPlaylistsItems(playlistLink, entry.getKey(), insert).build();
-                        final SnapshotResult res = reorderReq.execute();
-                        tracks = res.getSnapshotId();
-                    }else{
-                        System.out.println(entry.getKey() + " " + insert);
-                        final ReorderPlaylistsItemsRequest reorderReq = spotifyApi.reorderPlaylistsItems(playlistLink, entry.getKey(), insert).snapshot_id(tracks).build();
-                        final SnapshotResult res = reorderReq.execute();
-                        tracks = res.getSnapshotId();
+                //sort by popularity
+                List<Track> sortedTracks = new ArrayList<>(trackList);
+                    sortedTracks.sort((a, b) -> {
+                        int popCompare = Integer.compare(b.getPopularity(), a.getPopularity());
+                        if (popCompare != 0) return popCompare;
+
+                        //artists alphabetical
+                        String artistA = a.getArtists().length > 0 ? a.getArtists()[0].getName() : "";
+                        String artistB = b.getArtists().length > 0 ? b.getArtists()[0].getName() : "";
+                        return artistA.compareToIgnoreCase(artistB);
+                    });
+
+                if(method.equals("preserve")){
+                    for (int i = 0; i < sortedTracks.size(); i++) {
+                        Track targetTrack = sortedTracks.get(i);
+                        int currentIndex = -1;
+
+
+                        for (int j = 0; j < trackList.size(); j++) {
+                            if (trackList.get(j).getUri().equals(targetTrack.getUri())) {
+                                currentIndex = j;
+                                break;
+                            }
+                        }
+                        if (currentIndex == i) {
+                            continue;
+                        }
+
+                        ReorderPlaylistsItemsRequest reorderReq;
+                        if (snapshotId.equals("empty")) {
+                            reorderReq = spotifyApi.reorderPlaylistsItems(playlistLink, currentIndex, i).build();
+                        }else {
+                            reorderReq = spotifyApi.reorderPlaylistsItems(playlistLink, currentIndex, i).snapshot_id(snapshotId).build();
+                        }
+
+                        SnapshotResult res = reorderReq.execute();
+                        snapshotId = res.getSnapshotId();
+
+                        Track moved = trackList.remove(currentIndex);
+                        trackList.add(i, moved);
+
+                        Thread.sleep(250);
                     }
-                    insert++;
+                }else{
+                    List<JsonObject> uriBatches = new ArrayList<>();
+                    int maxBatchSize = 100;
+                    int numIts = Math.ceilDiv(sortedTracks.size(), maxBatchSize);
+                    int index = 0; //track position in playlist
+
+                    for(int i = 0; i < numIts; i++){
+                        int tracksToTake = Math.min(maxBatchSize, sortedTracks.size()-index);
+                        JsonArray uriArray = new JsonArray();
+                        for(int j = 0; j < tracksToTake; j++){
+                            uriArray.add(sortedTracks.get(index).getUri());
+                            index++;
+                        }
+                        JsonObject batch = new JsonObject();
+                        batch.add("uris", uriArray);
+                        uriBatches.add(batch);
+                    }
+
+                    if(method.equals("new")){
+                        GetPlaylistRequest getPlaylistRequest = spotifyApi.getPlaylist(playlistLink).build();
+                        Playlist playlist = getPlaylistRequest.execute();
+                        String playlistName = playlist.getName() + " - sorted by popularity descending";
+                        String playlistDesc = playlist.getDescription();
+                        Boolean playlistPublic = playlist.getIsPublicAccess();
+                        Boolean playlistCollab = playlist.getIsCollaborative();
+                        CreatePlaylistRequest createPlaylistRequest = spotifyApi.createPlaylist(userId, playlistName)
+                        .description(playlistDesc)
+                        .public_(playlistPublic)
+                        .collaborative(playlistCollab)
+                        .build();
+                        Playlist newPlaylist = createPlaylistRequest.execute();
+
+                        for(int i = 0; i < numIts; i++){
+                            AddItemsToPlaylistRequest addItemsToPlaylistRequest = spotifyApi.addItemsToPlaylist(newPlaylist.getId(), uriBatches.get(i).getAsJsonArray("uris")).build();
+                            SnapshotResult snapshotResult = addItemsToPlaylistRequest.execute();
+                            System.out.println(snapshotResult);
+                        }
+
+
+                    }else if(method.equals("overwrite")){
+                        String[] filler = new String[]{"spotify:track:5XSKC4d0y0DfcGbvDOiL93"};
+                        JsonArray fillerJson = JsonParser.parseString("[{\"uri\":\"spotify:track:5XSKC4d0y0DfcGbvDOiL93\"}]").getAsJsonArray();
+                        ReplacePlaylistsItemsRequest replaceReq = spotifyApi.replacePlaylistsItems(playlistLink, filler).build();
+                        replaceReq.execute();
+
+                        RemoveItemsFromPlaylistRequest clearReq = spotifyApi.removeItemsFromPlaylist(playlistLink, fillerJson).build();
+                        SnapshotResult res = clearReq.execute();
+                        System.out.println(res);
+
+                        for(int i = 0; i < numIts; i++){
+                            AddItemsToPlaylistRequest addItemsToPlaylistRequest = spotifyApi.addItemsToPlaylist(playlistLink, uriBatches.get(i).getAsJsonArray("uris")).build();
+                            SnapshotResult snapshotResult = addItemsToPlaylistRequest.execute();
+                            System.out.println(snapshotResult);
+                        }
+                    }
                 }
-                
                 return "Sorting successful";
-            }catch(Exception e){
-                if(count == maxTries){
-                    return ("Error :" + e.getMessage());
+            } catch (TooManyRequestsException e) {
+                int retryTime = e.getRetryAfter();
+                try {
+                    System.out.println("Rate limited: Waiting " + retryTime + "s");
+                    Thread.sleep(retryTime * 1000L);
+                    continue;
+                } catch (InterruptedException | NumberFormatException ex) {
+                    System.err.println("Invalid Retry-After. Waiting 5s");
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ignore) {}
+                    continue;
+                }
+            } catch(Exception e){
+                if(refreshAttempts == maxRetries){
+                    return ("Sorting unsuccessful");
                 }else{
                     try{
                         final AuthorizationCodeRefreshRequest authCodeRefreshReq = spotifyApi.authorizationCodeRefresh().build();
-                            final AuthorizationCodeCredentials creds = authCodeRefreshReq.execute();
-                            spotifyApi.setAccessToken(creds.getAccessToken());
-                            userProfileService.insertOrUpdateProfile(userId, creds.getAccessToken(), spotifyApi.getRefreshToken());
-                            count++;
+                        final AuthorizationCodeCredentials creds = authCodeRefreshReq.execute();
+                        spotifyApi.setAccessToken(creds.getAccessToken());
+                        userProfileService.insertOrUpdateProfile(userId, creds.getAccessToken(), spotifyApi.getRefreshToken());
+                        refreshAttempts++;
+                        continue;
                     }catch(Exception er){
-                        return ("Error :" + er.getMessage());
+                        return ("Sorting unsuccessful");
                     }
                 }
             }
         }
     }
 }
+

@@ -2,7 +2,6 @@ package com.aleena.spotifytools.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,18 +9,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.aleena.spotifytools.config.SpotifyConfig;
+import com.aleena.spotifytools.dto.PlaylistDTO;
 import com.aleena.spotifytools.dto.SongDTO;
-import com.aleena.spotifytools.entity.Song;
 import com.aleena.spotifytools.service.GetRecentlyPlayedService;
 import com.aleena.spotifytools.service.GetRepeatsService;
+import com.aleena.spotifytools.service.GetUsersPlaylistsService;
 import com.aleena.spotifytools.service.LoginService;
 import com.aleena.spotifytools.service.RedirectService;
 import com.aleena.spotifytools.service.SkippedSongsTrackService;
@@ -50,6 +47,13 @@ public class SpotifytoolsController {
     private SkippedSongsTrackService skippedSongsTrackService;
     @Autowired
     private GetRepeatsService repeatsService;
+    @Autowired
+    private GetUsersPlaylistsService playlistsService;
+
+
+
+    //TODO: what to do in case of "noID"
+
 
     @GetMapping("/login")
     public String spotifyLogin() throws IOException{
@@ -89,10 +93,17 @@ public class SpotifytoolsController {
     }
 
 
-    @PostMapping("sort-playlist-popularity")
-    public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
+    @GetMapping("users-playlists")
+    public List<PlaylistDTO> getUsersPlaylists(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        return sortByPopularityService.sortByPop(spotifyApi, userId);
+        return playlistsService.getUsersPlaylists(spotifyApi, userId);
+    }
+    
+
+    @PostMapping("sort-playlist-popularity")
+    public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody String playlistLink, @RequestBody String method, HttpServletResponse response) throws IOException{
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        return sortByPopularityService.sortByPop(spotifyApi, userId, playlistLink, method);
     }
 
     @GetMapping("repeats")
