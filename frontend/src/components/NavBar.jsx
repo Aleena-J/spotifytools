@@ -23,7 +23,7 @@ function NavBar() {
                 <Link to="/" className="brand-link">SpotifyTools</Link>
             </div>
             <div className="navbar-links">
-                {isLoggedIn && <Link to="/logout" className="nav-link">Logout</Link>}
+                {isLoggedIn ? <Link to="/logout" className="nav-link">Logout</Link> : <Link to="/login" className="nav-link">Login</Link>}
                 {isLoggedIn && <Link to="/repeats" className="nav-link">Repeats</Link>}
                 {isLoggedIn && <Link to="/skips" className="nav-link">Skips</Link>}
                 {isLoggedIn && <Link to="/sort-playlist" className="nav-link">Sort Playlist</Link>}

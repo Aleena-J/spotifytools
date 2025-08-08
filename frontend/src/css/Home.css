@@ -28,22 +28,4 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.loginButton{
-    background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
-    color: white;
-    text-shadow: black 0px 0px 5px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 30px;
-    text-align: center;
-    display: block;
-    border-radius: 12px;
-    padding: 20px;
-    margin: auto;
-}
-
-.loginButton:hover{
-    background-image: linear-gradient(to bottom right, #70d493 , #52db82);
-    border-color: black;
-}
-
 

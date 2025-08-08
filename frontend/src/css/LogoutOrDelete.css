@@ -1,0 +1,63 @@
+.logout-body{
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    flex-direction: column;
+    gap: 100px; 
+}
+
+
+.select-text{
+    font-size: 40px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.options-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+.option-logout{
+    font-size: 20px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+
+.option-delete{
+    font-size: 20px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.logout-btn{
+    background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
+    color: white;
+    text-shadow: black 0px 0px 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 30px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.logout-btn:hover{
+    background-image: linear-gradient(to bottom right, #70d493 , #52db82);
+    border-color: black;
+}
+
+.delete-btn{
+    background-image: linear-gradient(to bottom right, #920000 , #661e1e);
+    color: white;
+    text-shadow: black 0px 0px 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 30px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.delete-btn:hover{
+    background-image: linear-gradient(to bottom right, #565857 , #6c756f);
+    border-color: black;
+}

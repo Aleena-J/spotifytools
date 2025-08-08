@@ -17,7 +17,7 @@ import com.aleena.spotifytools.config.SpotifyConfig;
 import com.aleena.spotifytools.dto.PlaylistDTO;
 import com.aleena.spotifytools.dto.SongDTO;
 import com.aleena.spotifytools.dto.SortRequestDTO;
-import com.aleena.spotifytools.service.GetRecentlyPlayedService;
+import com.aleena.spotifytools.service.DeleteUserService;
 import com.aleena.spotifytools.service.GetRepeatsService;
 import com.aleena.spotifytools.service.GetUsersPlaylistsService;
 import com.aleena.spotifytools.service.LoginService;
@@ -37,8 +37,6 @@ public class SpotifytoolsController {
     @Autowired
     private SpotifyConfig spotifyConfig;
     @Autowired
-    private GetRecentlyPlayedService recentlyPlayedService;
-    @Autowired
     private LoginService loginService;
     @Autowired
     private RedirectService redirectService;
@@ -50,7 +48,8 @@ public class SpotifytoolsController {
     private GetRepeatsService repeatsService;
     @Autowired
     private GetUsersPlaylistsService playlistsService;
-
+    @Autowired
+    private DeleteUserService deleteUserService;
 
 
     //TODO: what to do in case of "noID"
@@ -85,15 +84,6 @@ public class SpotifytoolsController {
         
     }
 
-    
-    //TODO: Delete eventually
-    @GetMapping("get-recently-played")
-    public String getRecentlyPlayed(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
-        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        return recentlyPlayedService.recentlyPlayed(spotifyApi, userId);
-    }
-
-
     @GetMapping("users-playlists")
     public List<PlaylistDTO> getUsersPlaylists(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
@@ -118,8 +108,8 @@ public class SpotifytoolsController {
     }
     
     @DeleteMapping("delete-account")
-    public String deleteUser(@CookieValue(value = "userId", defaultValue = "noID") String userId){
-        return new String();
+    public String deleteUser(@CookieValue(value = "userId", defaultValue = "noID") String userId) throws IOException{
+        return deleteUserService.deleteUser(userId);
     }
     
 

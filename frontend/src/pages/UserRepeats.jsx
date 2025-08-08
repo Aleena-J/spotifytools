@@ -155,6 +155,7 @@ function UserRepeats() {
                     .filter((song) => song.dateType === "lastmonth")
                     .map((song) => (
                         <li className="repeatedSong" key={song.songUrl}>
+                            <img className="song-image" src={song.imageUrl}/>
                             <div className="song-info">
                                 <div className="song-text">
                                     <div className="truncate">Title: {song.songName}</div>

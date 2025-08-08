@@ -52,18 +52,24 @@ public class GetUsersPlaylistsService {
                         final Paging<PlaylistSimplified> playlistPaging = getPlaylistsReq.execute();
 
                         if(playlistPaging.getNext() != null){
-                            String[] splitUrlOffset = playlistPaging.getNext().split("offset=");
-                            offset = Integer.valueOf(splitUrlOffset[1].substring(0, splitUrlOffset[1].indexOf("&")));
-                            String[] splitUrlLimit = splitUrlOffset[1].split("limit=");
-                            limit = Integer.valueOf(splitUrlLimit[1]);
+                            // String[] splitUrlOffset = playlistPaging.getNext().split("offset=");
+                            // offset = Integer.valueOf(splitUrlOffset[1].substring(0, splitUrlOffset[1].indexOf("&")));
+                            // String[] splitUrlLimit = splitUrlOffset[1].split("limit=");
+                            // limit = Integer.valueOf(splitUrlLimit[1]);
+                            offset += limit;
                         }else{
                             nextExists = false;
                         }
 
                         PlaylistSimplified[] items = playlistPaging.getItems();
 
+
                         for(int i = 0; i < items.length; i++){
-                            PlaylistDTO playlist = new PlaylistDTO(items[i].getId(), items[i].getImages()[0].getUrl(), items[i].getName(), items[i].getTracks().getTotal(), items[i].getOwner().getDisplayName(), items[i].getExternalUrls().get("spotify"));
+                            String imageUrl = null;
+                            if (items[i].getImages() != null && items[i].getImages().length > 0) {
+                                imageUrl = items[i].getImages()[0].getUrl();
+                            }
+                            PlaylistDTO playlist = new PlaylistDTO(items[i].getId(), imageUrl, items[i].getName(), items[i].getTracks().getTotal(), items[i].getOwner().getDisplayName(), items[i].getExternalUrls().get("spotify"));
                             playlists.add(playlist);
                         }
                     }
@@ -84,6 +90,7 @@ public class GetUsersPlaylistsService {
                         continue;
                     }
                 } catch(Exception e){
+                    System.out.println(e.getMessage());
                     if(refreshAttempts == maxRetries){
                         return Collections.emptyList();
                     }else{

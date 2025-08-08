@@ -55,7 +55,7 @@ public class GetUserRecentSongsService {
     //TODO: CHANGE TO 24 MINS WHEN NOT TESTING
     @Scheduled(fixedRate = 30000) //every 24min get all users' recently played and store new songs
     public void getSong() throws IOException{
-        int maxTries = 1;
+        int maxTries = 3;
         List<UserProfile> userList =  profileRepository.findAll();
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         for(int i = 0; i < userList.size(); i++){

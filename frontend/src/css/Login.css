@@ -1,0 +1,39 @@
+.login-body{
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    flex-direction: column;
+    gap: 10px; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.loginText{
+    font-size: 80px;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.login-info{
+    font-size: 30px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.loginButton{
+    background-image: linear-gradient(to bottom right, #1DB954 , #0e8f3b);
+    color: white;
+    text-shadow: black 0px 0px 5px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 30px;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.loginButton:hover{
+    background-image: linear-gradient(to bottom right, #70d493 , #52db82);
+    border-color: black;
+}

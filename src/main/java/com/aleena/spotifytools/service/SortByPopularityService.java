@@ -69,11 +69,12 @@ public class SortByPopularityService {
                     final Paging<PlaylistTrack> playlistTrackPaging = getPlaylistsItemsRequest.execute();
 
                     if(playlistTrackPaging.getNext() != null){
-                        //https://stackoverflow.com/questions/63308487/how-do-i-get-parameter-value-from-url-as-string
-                        String[] splitUrlOffset = playlistTrackPaging.getNext().split("offset=");
-                        offset = Integer.valueOf(splitUrlOffset[1].substring(0, splitUrlOffset[1].indexOf("&")));
-                        String[] splitUrlLimit = splitUrlOffset[1].split("limit=");
-                        limit = Integer.valueOf(splitUrlLimit[1]);
+                        // //https://stackoverflow.com/questions/63308487/how-do-i-get-parameter-value-from-url-as-string
+                        // String[] splitUrlOffset = playlistTrackPaging.getNext().split("offset=");
+                        // offset = Integer.valueOf(splitUrlOffset[1].substring(0, splitUrlOffset[1].indexOf("&")));
+                        // String[] splitUrlLimit = splitUrlOffset[1].split("limit=");
+                        // limit = Integer.valueOf(splitUrlLimit[1]);
+                        offset += limit;
                     }else{
                         nextExists = false;
                     }
@@ -87,7 +88,7 @@ public class SortByPopularityService {
                     }
                 }
 
-
+                System.out.println("PLAYLIST LENGTH = " + trackList.size());
                 //sort by popularity
                 List<Track> sortedTracks = new ArrayList<>(trackList);
                     sortedTracks.sort((a, b) -> {

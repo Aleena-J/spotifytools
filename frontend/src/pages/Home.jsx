@@ -15,21 +15,11 @@ function Home() {
         }
     }, []);
 
-    const getSpotifyLogin = () => {
-        fetch("http://127.0.0.1:8080/login", {
-            credentials: "include"
-        })
-        .then(res => res.text())
-        .then(authUrl => {
-            window.location.replace(authUrl);
-        });
-    };
-
     return (
         <div className="welcome-body">
             <h1 className='welcome-text'>Welcome!</h1>
             <img src={gif} className='kendall-gif'/>
-            {isLoggedIn ? <h2 className='loginText'>You are logged in!</h2> : <button className="loginButton" onClick={getSpotifyLogin}>Login</button>}
+            {isLoggedIn ? <h2 className='loginText'>You are logged in!</h2> :  <h2 className='loginText'>Log in to get started!</h2>}
         </div>
     );
 }

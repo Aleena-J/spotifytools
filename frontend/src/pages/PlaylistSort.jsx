@@ -10,6 +10,7 @@ function PlaylistSort(){
     const [selectedMethods, setSelectedMethods] = useState({});
     const [isSorting, setIsSorting] = useState(false)
     const [sortingPlaylist, setSortingPlaylist] = useState(null);
+    
     useEffect(() => {
         if (!loading && !isLoggedIn) {
             window.location.replace("/");
@@ -87,6 +88,7 @@ function PlaylistSort(){
             <h1 className='main-title'>Playlist Sorter</h1>
             <br/>
             <p className='info-text'>
+            Sort playlists by descending popularity! <br/>
             Preserve: Selecting preserve will keep metadata such as the date the song was originally added. This method will take longer especially for large playlists.<br/>
             Overwrite: Selecting overwrite will sort the original playlist. It will write over metadata such as the date originally added.<br/>
             New: Selecting new will create a new playlist that is a copy but with the songs sorted.<br/>
@@ -97,12 +99,12 @@ function PlaylistSort(){
                 {playlists
                 .map((playlist) => (
                     <li className='playlist' key={playlist.playlistID}>
-                        <img className='playlist-image' src={playlist.imageUrl}/>
                         <div className='playlist-info'>
+                            <img className='playlist-image' src={playlist.imageUrl}/>
                             <div className='playlist-text'>
-                                <div className='playlist-name'>Name: {playlist.playlistName}</div>
-                                {playlist.owner && <div className='playlist-owner'>Owner: {playlist.owner}</div>}
-                                <div className='playlist-num'>Num tracks: {playlist.numTracks}</div>
+                                < div className="truncate">Name: {playlist.playlistName}</div>
+                                {playlist.owner && <div className="truncate">Owner: {playlist.owner}</div>}
+                                <div className="truncate">Num tracks: {playlist.numTracks}</div>
                             </div>
                                 <a
                                     className="spotify-redirect"
@@ -113,7 +115,8 @@ function PlaylistSort(){
                                     Spotify
                                 </a>
                                 <br/>
-                                <select 
+                                <select
+                                    className='method-select-menu' 
                                     id={`method-selection-${playlist.playlistID}`}
                                     value={selectedMethods[playlist.playlistID] || "0"}
                                     onChange={(e) => handleSelectChange(playlist.playlistID, e.target.value)}
@@ -126,6 +129,7 @@ function PlaylistSort(){
                                 </select>
 
                                 <button
+                                    className='sort-button' 
                                     id={`sort-button-${playlist.playlistID}`}
                                     disabled={
                                         isSorting || 
