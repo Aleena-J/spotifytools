@@ -2,12 +2,70 @@ import '../css/UserRepeats.css';
 import Cookies from 'js-cookie';
 import { useState, useEffect, useRef } from "react"
 
+
+function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSubmit, createRepeatPlaylist, selectedTime, isCreating }) {
+    const songs = repeatedSongs.filter(song => song.dateType === period);
+    const filteredSongs = songs.filter(song => song.repeats >= filterNum);
+
+    if (songs.length === 0) {
+        return <p className='noRepeats-text'>No repeats for this period!</p>;
+    }
+
+    return (
+        <>
+            <button 
+                className='createPlaylist'
+                onClick={() => createRepeatPlaylist(selectedTime, filteredSongs)}
+                disabled={isCreating || filteredSongs.length === 0}
+            >
+                Create Playlist
+            </button>
+
+            <form className="repeat-limit" onSubmit={handleSubmit}>
+                <label>Minimum number of repeats:   </label>
+                <input 
+                    type="number"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                />
+                <button className="limit-apply" type="submit">Apply</button>
+            </form>
+
+            <ol className="repeats-active">
+                {filteredSongs.map(song => (
+                    <li className="repeatedSong" key={song.songUrl}>
+                        <img className="song-image" src={song.imageUrl} alt={song.songName} />
+                        <div className="song-info">
+                            <div className="song-text">
+                                <div className="truncate">Title: {song.songName}</div>
+                                <div className="truncate">Artist(s): {song.artists}</div>
+                                <div className="truncate">Album: {song.album}</div>
+                                <div>Repeats: {song.repeats}</div>
+                            </div>
+                            <a
+                                className="spotifyRedirect"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={song.songUrl}
+                            >
+                                Spotify
+                            </a>
+                        </div>
+                    </li>
+                ))}
+            </ol>
+        </>
+    );
+}
+
 function UserRepeats() {
     const [isLoggedIn, setLogIn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [repeatedSongs, setRepeatedSongs] = useState([]);
     const [selectedTime, setSelectedTime] = useState("today");
-    const [isCreating, setIsCreating] = useState(false)
+    const [isCreating, setIsCreating] = useState(false);
+    const [filterNum, setFilterNum] = useState(0);
+    const [input, setInput] = useState(0);
     const repeatedSongsRef = useRef([]);
 
     const timePeriods = [
@@ -89,47 +147,12 @@ function UserRepeats() {
         setIsCreating(false);
     };
 
-    const SongList = ({ period }) => {
-        const songs = repeatedSongs.filter(song => song.dateType === period);
-
-        if (songs.length === 0) {
-            return <p className='noRepeats-text'>No repeats for this period!</p>;
-        }
-
-        return (
-            <>
-                <button 
-                    className='createPlaylist'
-                    onClick={() => createRepeatPlaylist(selectedTime, songs)}
-                    disabled={isCreating}
-                >Create Playlist</button>
-
-                <ol className="repeats-active">
-                    {songs.map(song => (
-                        <li className="repeatedSong" key={song.songUrl}>
-                            <img className="song-image" src={song.imageUrl} alt={song.songName} />
-                            <div className="song-info">
-                                <div className="song-text">
-                                    <div className="truncate">Title: {song.songName}</div>
-                                    <div className="truncate">Artist(s): {song.artists}</div>
-                                    <div className="truncate">Album: {song.album}</div>
-                                    <div>Repeats: {song.repeats}</div>
-                                </div>
-                                <a
-                                    className="spotifyRedirect"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    href={song.songUrl}
-                                >
-                                    Spotify
-                                </a>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-            </>
-        );
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setFilterNum(input);
     };
+
+    
 
     return (
         <div className="repeat-body">
@@ -149,7 +172,17 @@ function UserRepeats() {
                             </button>
                     ))}
 
-                    <SongList period={selectedTime} />
+                    <SongList 
+                        period={selectedTime}
+                        repeatedSongs={repeatedSongs}
+                        filterNum={filterNum}
+                        input={input}
+                        setInput={setInput}
+                        handleSubmit={handleSubmit}
+                        createRepeatPlaylist={createRepeatPlaylist}
+                        selectedTime={selectedTime}
+                        isCreating={isCreating}
+                    />
                 </>
             )}
         </div>
