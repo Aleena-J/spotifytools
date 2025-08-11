@@ -88,7 +88,6 @@ public class SortByPopularityService {
                     }
                 }
 
-                System.out.println("PLAYLIST LENGTH = " + trackList.size());
                 //sort by popularity
                 List<Track> sortedTracks = new ArrayList<>(trackList);
                     sortedTracks.sort((a, b) -> {

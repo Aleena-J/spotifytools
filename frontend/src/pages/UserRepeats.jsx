@@ -7,8 +7,15 @@ function UserRepeats() {
     const [loading, setLoading] = useState(true);
     const [repeatedSongs, setRepeatedSongs] = useState([]);
     const [selectedTime, setSelectedTime] = useState("today");
+    const [isCreating, setIsCreating] = useState(false)
     const repeatedSongsRef = useRef([]);
 
+    const timePeriods = [
+        { key: "today", label: "Today" },
+        { key: "week", label: "This Week" },
+        { key: "month", label: "This Month" },
+        { key: "lastmonth", label: "Last Month" }
+    ];
 
     useEffect(() => {
         if (!loading && !isLoggedIn) {
@@ -58,129 +65,95 @@ function UserRepeats() {
         }
     }, []);
 
+    const createRepeatPlaylist = async (period, songs) => {
+        setIsCreating(true);
+        const res = await fetch("http://127.0.0.1:8080/create-repeat-playlist", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                period: period,
+                songs: songs
+                })
+        });
+        const data = await res.text();
+        if(data === "Creation unsuccessful"){
+            alert("Creation unsuccessful");
+        }else if(data === "Creation successful"){
+            alert("Creation successful!");
+        }else{
+            alert("Unknown error, unable to create");
+        }
+        setIsCreating(false);
+    };
+
+    const SongList = ({ period }) => {
+        const songs = repeatedSongs.filter(song => song.dateType === period);
+
+        if (songs.length === 0) {
+            return <p className='noRepeats-text'>No repeats for this period!</p>;
+        }
+
+        return (
+            <>
+                <button 
+                    className='createPlaylist'
+                    onClick={() => createRepeatPlaylist(selectedTime, songs)}
+                    disabled={isCreating}
+                >Create Playlist</button>
+
+                <ol className="repeats-active">
+                    {songs.map(song => (
+                        <li className="repeatedSong" key={song.songUrl}>
+                            <img className="song-image" src={song.imageUrl} alt={song.songName} />
+                            <div className="song-info">
+                                <div className="song-text">
+                                    <div className="truncate">Title: {song.songName}</div>
+                                    <div className="truncate">Artist(s): {song.artists}</div>
+                                    <div className="truncate">Album: {song.album}</div>
+                                    <div>Repeats: {song.repeats}</div>
+                                </div>
+                                <a
+                                    className="spotifyRedirect"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={song.songUrl}
+                                >
+                                    Spotify
+                                </a>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </>
+        );
+    };
+
     return (
         <div className="repeat-body">
-        {loading ? (
-            <h1>Loading...</h1>
-        ) : (
-            <>
-                <h1 className='repeatHeading'>Your repeats</h1>
-                
+            {loading ? (
+                <h1>Loading...</h1>
+            ) : (
+                <>
+                    <h1 className='repeatHeading'>Your repeats</h1>
 
-                <button className={`tabs${selectedTime === "today" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("today")}>Today</button>
-                <button className={`tabs${selectedTime === "week" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("week")}>This Week</button>
-                <button className={`tabs${selectedTime === "month" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("month")}>This Month</button>
-                <button className={`tabs${selectedTime === "lastmonth" ? "-activeTab" : ""}`} onClick={() => setSelectedTime("lastmonth")}>Last Month</button>
-
-                <ol className={`repeats${selectedTime === "today" ? "-active" : "" }`} >
-                    {repeatedSongs
-                    .filter((song) => song.dateType === "today")
-                    .map((song) => (
-                        <li className="repeatedSong" key={song.songUrl}>
-                            <img className="song-image" src={song.imageUrl}/>
-                            <div className="song-info">
-                                <div className="song-text">
-                                    <div className="truncate">Title: {song.songName}</div>
-                                    <div className="truncate">Artist(s): {song.artists}</div>
-                                    <div className="truncate">Album: {song.album}</div>
-                                    <div>Repeats: {song.repeats}</div>
-                                </div>
-                                <a
-                                className="spotifyRedirect"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href={song.songUrl}
-                                >
-                                Spotify
-                                </a>
-                            </div>
-                        </li>
+                    {timePeriods.map(period => (
+                            <button
+                                key={period.key}
+                                className={`tabs${selectedTime === period.key ? "-activeTab" : ""}`}
+                                onClick={() => setSelectedTime(period.key)}
+                            >
+                                {period.label}
+                            </button>
                     ))}
-                </ol>
 
-                <ol className={`repeats${selectedTime === "week" ? "-active" : "" }`}>
-                    {repeatedSongs
-                    .filter((song) => song.dateType === "week")
-                    .map((song) => (
-                        <li className="repeatedSong" key={song.songUrl}>
-                            <img className="song-image" src={song.imageUrl}/>
-                            <div className="song-info">
-                                <div className="song-text">
-                                    <div className="truncate">Title: {song.songName}</div>
-                                    <div className="truncate">Artist(s): {song.artists}</div>
-                                    <div className="truncate">Album: {song.album}</div>
-                                    <div>Repeats: {song.repeats}</div>
-                                </div>
-                                <a
-                                className="spotifyRedirect"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href={song.songUrl}
-                                >
-                                Spotify
-                                </a>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-
-                <ol className={`repeats${selectedTime === "month" ? "-active" : "" }`}>
-                    {repeatedSongs
-                    .filter((song) => song.dateType === "month")
-                    .map((song) => (
-                        <li className="repeatedSong" key={song.songUrl}>
-                            <img className="song-image" src={song.imageUrl}/>
-                            <div className="song-info">
-                                <div className="song-text">
-                                    <div className="truncate">Title: {song.songName}</div>
-                                    <div className="truncate">Artist(s): {song.artists}</div>
-                                    <div className="truncate">Album: {song.album}</div>
-                                    <div>Repeats: {song.repeats}</div>
-                                </div>
-                                <a
-                                className="spotifyRedirect"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href={song.songUrl}
-                                >
-                                Spotify
-                                </a>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-
-                <ol className={`repeats${selectedTime === "lastmonth" ? "-active" : "" }`}>
-                    {repeatedSongs
-                    .filter((song) => song.dateType === "lastmonth")
-                    .map((song) => (
-                        <li className="repeatedSong" key={song.songUrl}>
-                            <img className="song-image" src={song.imageUrl}/>
-                            <div className="song-info">
-                                <div className="song-text">
-                                    <div className="truncate">Title: {song.songName}</div>
-                                    <div className="truncate">Artist(s): {song.artists}</div>
-                                    <div className="truncate">Album: {song.album}</div>
-                                    <div>Repeats: {song.repeats}</div>
-                                </div>
-                                <a
-                                className="spotifyRedirect"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href={song.songUrl}
-                                >
-                                Spotify
-                                </a>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-                
-            </>
-        )}
-    </div>
+                    <SongList period={selectedTime} />
+                </>
+            )}
+        </div>
     );
 }
 
-
-export default UserRepeats
+export default UserRepeats;

@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.util.List;
 
 import com.aleena.spotifytools.config.SpotifyConfig;
+import com.aleena.spotifytools.dto.PlaylistCreateDTO;
 import com.aleena.spotifytools.dto.PlaylistDTO;
 import com.aleena.spotifytools.dto.SongDTO;
 import com.aleena.spotifytools.dto.SortRequestDTO;
+import com.aleena.spotifytools.service.CreateRepeatPlaylistService;
 import com.aleena.spotifytools.service.DeleteUserService;
 import com.aleena.spotifytools.service.GetRepeatsService;
 import com.aleena.spotifytools.service.GetUsersPlaylistsService;
@@ -50,6 +52,8 @@ public class SpotifytoolsController {
     private GetUsersPlaylistsService playlistsService;
     @Autowired
     private DeleteUserService deleteUserService;
+    @Autowired
+    private CreateRepeatPlaylistService repeatPlaylistService;
 
 
     //TODO: what to do in case of "noID"
@@ -77,13 +81,6 @@ public class SpotifytoolsController {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
-
-    @PostMapping("/logout")
-    @ResponseBody
-    public void logout(@CookieValue(value = "userId", defaultValue = "noID") String userId) throws IOException{
-        
-    }
-
     @GetMapping("users-playlists")
     public List<PlaylistDTO> getUsersPlaylists(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
@@ -102,22 +99,31 @@ public class SpotifytoolsController {
         return repeatsService.repeats(userId);
     }
 
-    @GetMapping("skips")
-    public String getUserSkips(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
-        return new String();
-    }
     
     @DeleteMapping("delete-account")
     public String deleteUser(@CookieValue(value = "userId", defaultValue = "noID") String userId) throws IOException{
         return deleteUserService.deleteUser(userId);
     }
     
+    
+    @PostMapping("create-repeat-playlist")
+    public String postMethodName(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody PlaylistCreateDTO request) {
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        String period = request.getPeriod();
+        List<SongDTO> songs = request.getSongs();
+        return repeatPlaylistService.createRepeatPlaylist(spotifyApi, userId, period, songs);
+    }
+    
+    
+     @GetMapping("skips")
+    public String getUserSkips(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+        return new String();
+    }
 
     @PostMapping("track-skip")
     public String trackUserSkip(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return skippedSongsTrackService.trackSkip(spotifyApi, userId);
     }
-    
   
 }

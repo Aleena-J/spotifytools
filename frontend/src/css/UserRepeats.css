@@ -125,3 +125,33 @@ ol{
 .spotifyRedirect:hover{
     background-image: linear-gradient(to bottom right, #70d493 , #52db82);
 }
+
+.noRepeats-text{
+    font-size: 30px;
+    text-align: center;
+    padding:50px;
+    margin:auto;
+    font-weight: bold;
+    width:100%
+}
+
+.createPlaylist{
+    display: block;
+    justify-self: center;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    background-image: linear-gradient(to bottom right, #000000 , #202221);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    margin: 20px;
+    padding: 20px;
+}
+
+.createPlaylist:hover{
+    background-image: linear-gradient(to bottom right, #616161 , #646d67);
+}
+
+.createPlaylist:disabled{
+    background: #c2c2c2;
+}
