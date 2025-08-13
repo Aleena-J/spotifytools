@@ -17,6 +17,7 @@ import com.aleena.spotifytools.dto.PlaylistCreateDTO;
 import com.aleena.spotifytools.dto.PlaylistDTO;
 import com.aleena.spotifytools.dto.SongDTO;
 import com.aleena.spotifytools.dto.SortRequestDTO;
+import com.aleena.spotifytools.service.AddToQueueService;
 import com.aleena.spotifytools.service.CreateRepeatPlaylistService;
 import com.aleena.spotifytools.service.DeleteUserService;
 import com.aleena.spotifytools.service.GetRepeatsService;
@@ -53,6 +54,8 @@ public class SpotifytoolsController {
     private DeleteUserService deleteUserService;
     @Autowired
     private CreateRepeatPlaylistService repeatPlaylistService;
+    @Autowired
+    private AddToQueueService queueService;
 
 
     //TODO: what to do in case of "noID"
@@ -112,7 +115,12 @@ public class SpotifytoolsController {
         List<SongDTO> songs = request.getSongs();
         return repeatPlaylistService.createRepeatPlaylist(spotifyApi, userId, period, songs);
     }
-    
+
+    @PostMapping("add-to-queue")
+    public String postMethodName(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody String uri) {
+        SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
+        return queueService.addToQueue(spotifyApi, userId, uri);
+    }
     
      @GetMapping("skips")
     public String getUserSkips(@CookieValue(value = "userId", defaultValue = "noID") String userId) {

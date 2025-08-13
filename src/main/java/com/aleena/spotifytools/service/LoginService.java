@@ -13,7 +13,7 @@ import se.michaelthelin.spotify.requests.authorization.authorization_code.Author
 public class LoginService {
     public String spotifyLogin(SpotifyApi spotifyApi) throws IOException{
         AuthorizationCodeUriRequest authCodeUriReq = spotifyApi.authorizationCodeUri()
-        .scope("user-read-playback-state,user-read-recently-played, user-read-currently-playing, playlist-read-private, playlist-modify-public, playlist-modify-private, user-read-email")
+        .scope("user-modify-playback-state, user-read-playback-state,user-read-recently-played, user-read-currently-playing, playlist-read-private, playlist-modify-public, playlist-modify-private")
         .show_dialog(true)
         .build();
 

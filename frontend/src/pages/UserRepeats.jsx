@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { useState, useEffect, useRef } from "react"
 
 
-function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSubmit, createRepeatPlaylist, selectedTime, isCreating }) {
+function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSubmit, createRepeatPlaylist, addToQueue, selectedTime, isCreating, isAdding }) {
     const songs = repeatedSongs.filter(song => song.dateType === period);
     const filteredSongs = songs.filter(song => song.repeats >= filterNum);
 
@@ -22,7 +22,7 @@ function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSub
             </button>
 
             <form className="repeat-limit" onSubmit={handleSubmit}>
-                <label>Minimum number of repeats:   </label>
+                <label>Minimum number of plays:   </label>
                 <input 
                     type="number"
                     value={input}
@@ -40,7 +40,7 @@ function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSub
                                 <div className="truncate">Title: {song.songName}</div>
                                 <div className="truncate">Artist(s): {song.artists}</div>
                                 <div className="truncate">Album: {song.album}</div>
-                                <div>Repeats: {song.repeats}</div>
+                                <div>Plays: {song.repeats}</div>
                             </div>
                             <a
                                 className="spotifyRedirect"
@@ -50,6 +50,13 @@ function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSub
                             >
                                 Spotify
                             </a>
+                            <button 
+                                className='addQueue'
+                                onClick={() => addToQueue(song.songId)}
+                                disabled={isAdding}
+                            >   
+                                {isAdding ? "Adding" : "Add to Queue"}
+                            </button>
                         </div>
                     </li>
                 ))}
@@ -64,6 +71,7 @@ function UserRepeats() {
     const [repeatedSongs, setRepeatedSongs] = useState([]);
     const [selectedTime, setSelectedTime] = useState("today");
     const [isCreating, setIsCreating] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
     const [filterNum, setFilterNum] = useState(0);
     const [input, setInput] = useState(0);
     const repeatedSongsRef = useRef([]);
@@ -152,6 +160,26 @@ function UserRepeats() {
         setFilterNum(input);
     };
 
+    const addToQueue = async (uri) => {
+        setIsAdding(true);
+        const res = await fetch("http://127.0.0.1:8080/add-to-queue", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+                body: uri
+        });
+        const data = await res.text();
+        if(data === "Adding unsuccessful"){
+            alert("Unsuccessful - this feature only works with premium and if there is an active device");
+        }else if(data === "Successfully added"){
+
+        }else{
+            alert("Unknown error, unable to add");
+        }
+        setIsAdding(false);
+    }
     
 
     return (
@@ -180,8 +208,10 @@ function UserRepeats() {
                         setInput={setInput}
                         handleSubmit={handleSubmit}
                         createRepeatPlaylist={createRepeatPlaylist}
+                        addToQueue={addToQueue}
                         selectedTime={selectedTime}
                         isCreating={isCreating}
+                        isAdding={isAdding}
                     />
                 </>
             )}

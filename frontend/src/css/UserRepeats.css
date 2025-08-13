@@ -177,3 +177,22 @@ ol{
 .limit-apply:hover{
     background-image: linear-gradient(to bottom right, #616161 , #646d67);
 }
+
+.addQueue{
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    background-image: linear-gradient(to bottom right, #000000 , #202221);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.addQueue:hover{
+    background-image: linear-gradient(to bottom right, #616161 , #646d67);
+}
+
+.addQueue:disabled{
+    background: #c2c2c2;
+}
