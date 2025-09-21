@@ -89,13 +89,34 @@ public class GetUserRecentSongsService {
 
                         LocalDateTime datePlayed = LocalDateTime.ofInstant(item.getPlayedAt().toInstant(), ZoneOffset.UTC);
 
+                        //Check if song has been played before
+                        LocalDateTime lastDatePlayed = songUserPlayedRepository.findMostRecentPlay(userList.get(i), song);
+
+                        int songDuration = item.getTrack().getDurationMs();
+                        int halfSongDuration = Math.max((int)(songDuration * 0.5), 30000);
+
+                        boolean insertToDb = false;
+
+                        if(lastDatePlayed == null){
+                            insertToDb = true;
+                        }else{
+                            //If song has been played before, check if atleast half of song was played before this new entry was made
+                            //This is to make sure pause/resumes are not counted as multiple plays
+                            long differenceBtPlays = java.time.Duration.between(lastDatePlayed, datePlayed).toMillis();
+
+                            if (differenceBtPlays >= halfSongDuration) {
+                                insertToDb = true;
+                            }
+                        }
+
                         Set<String> inserted = new HashSet<>();
                         
                         String songKey = userList.get(i).getUserId() + "-" + songId + "-" + datePlayed.toString();
-
-                        if (!inserted.contains(songKey) && !songUserPlayedRepository.existsByUserAndSongAndDate(userList.get(i), song, datePlayed)) {
-                            songUserPlayedService.insertSong(userList.get(i), song, datePlayed);
-                            inserted.add(songKey);
+                        if(insertToDb){
+                            if (!inserted.contains(songKey) && !songUserPlayedRepository.existsByUserAndSongAndDate(userList.get(i), song, datePlayed)) {
+                                songUserPlayedService.insertSong(userList.get(i), song, datePlayed);
+                                inserted.add(songKey);
+                            }
                         }
                     }
                     break;

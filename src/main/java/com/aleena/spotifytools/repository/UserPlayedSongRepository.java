@@ -27,4 +27,7 @@ public interface UserPlayedSongRepository extends JpaRepository<UserPlayedSong, 
     @Modifying
     @Query("DELETE FROM UserPlayedSong ups WHERE ups.user = :user")
     void deleteByUser(@Param("user") UserProfile user);
+
+    @Query("SELECT MAX(ups.date) FROM UserPlayedSong ups WHERE ups.user = :user AND ups.song = :song")
+    LocalDateTime findMostRecentPlay(@Param("user") UserProfile user, @Param("song") Song song);
 }

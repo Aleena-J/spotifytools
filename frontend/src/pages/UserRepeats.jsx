@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { useState, useEffect, useRef } from "react"
 
 
-function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSubmit, createRepeatPlaylist, addToQueue, selectedTime, isCreating, isAdding }) {
+function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSubmit, createRepeatPlaylist, addToQueue, selectedTime, isCreating, isAdding, currentAdd }) {
     const songs = repeatedSongs.filter(song => song.dateType === period);
     const filteredSongs = songs.filter(song => song.repeats >= filterNum);
 
@@ -53,9 +53,9 @@ function SongList({ period, repeatedSongs, filterNum, input, setInput, handleSub
                             <button 
                                 className='addQueue'
                                 onClick={() => addToQueue(song.songId)}
-                                disabled={isAdding}
+                                disabled={currentAdd === song.songId }
                             >   
-                                {isAdding ? "Adding" : "Add to Queue"}
+                                {currentAdd === song.songId ? "Adding" : "Add to Queue"}
                             </button>
                         </div>
                     </li>
@@ -74,6 +74,7 @@ function UserRepeats() {
     const [isAdding, setIsAdding] = useState(false);
     const [filterNum, setFilterNum] = useState(0);
     const [input, setInput] = useState(0);
+    const [currentAdd, setCurrentAdd] = useState("");
     const repeatedSongsRef = useRef([]);
 
     const timePeriods = [
@@ -162,6 +163,7 @@ function UserRepeats() {
 
     const addToQueue = async (uri) => {
         setIsAdding(true);
+        setCurrentAdd(uri);
         const res = await fetch("http://127.0.0.1:8080/add-to-queue", {
             method: "POST",
             credentials: "include",
@@ -179,6 +181,7 @@ function UserRepeats() {
             alert("Unknown error, unable to add");
         }
         setIsAdding(false);
+        setCurrentAdd("");
     }
     
 
@@ -212,6 +215,7 @@ function UserRepeats() {
                         selectedTime={selectedTime}
                         isCreating={isCreating}
                         isAdding={isAdding}
+                        currentAdd={currentAdd}
                     />
                 </>
             )}

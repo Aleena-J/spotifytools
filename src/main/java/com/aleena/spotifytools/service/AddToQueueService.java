@@ -32,6 +32,7 @@ public class AddToQueueService {
                     String trackUri = "spotify:track:" + uri;
                     AddItemToUsersPlaybackQueueRequest addReq = spotifyApi.addItemToUsersPlaybackQueue(trackUri).build();
                     String res = addReq.execute();
+                    System.out.println(res);
                     return "Successfully added";
                 } catch (TooManyRequestsException e) {
                     int retryTime = e.getRetryAfter();

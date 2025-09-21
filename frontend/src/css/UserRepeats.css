@@ -179,10 +179,10 @@ ol{
 }
 
 .addQueue{
-    color: white;
+    color: black;
     font-weight: bold;
     text-decoration: none;
-    background-image: linear-gradient(to bottom right, #000000 , #202221);
+    background-image: linear-gradient(to bottom right, #ffffff , #dfe7e2);
     box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     border-radius: 5px;
     padding: 5px;
@@ -190,7 +190,7 @@ ol{
 }
 
 .addQueue:hover{
-    background-image: linear-gradient(to bottom right, #616161 , #646d67);
+    background-image: linear-gradient(to bottom right, #b1b1b1 , #919793);
 }
 
 .addQueue:disabled{
