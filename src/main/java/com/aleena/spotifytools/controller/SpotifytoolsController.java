@@ -59,8 +59,6 @@ public class SpotifytoolsController {
 
 
     //TODO: what to do in case of "noID"
-
-
     @GetMapping("/login")
     public String spotifyLogin() throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
@@ -93,7 +91,7 @@ public class SpotifytoolsController {
     @PostMapping("sort-playlist-popularity")
     public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody SortRequestDTO request, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
-        return sortByPopularityService.sortByPop(spotifyApi, userId, request.getPlaylistLink(), request.getMethod());
+        return sortByPopularityService.sortByPop(spotifyApi, userId, request.getPlaylistLink(), request.getMethod(), request.getOrder());
     }
 
     @GetMapping("repeats")

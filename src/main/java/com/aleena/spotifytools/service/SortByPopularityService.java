@@ -39,7 +39,7 @@ public class SortByPopularityService {
     UserProfileRepository profileRepository;
 
     //String method
-    public String sortByPop(SpotifyApi spotifyApi, String userId, String playlistLink, String method) {
+    public String sortByPop(SpotifyApi spotifyApi, String userId, String playlistLink, String method, String order) {
         String snapshotId = "empty"; 
         Integer offset = 0;
         Integer limit = 100;
@@ -90,15 +90,21 @@ public class SortByPopularityService {
 
                 //sort by popularity
                 List<Track> sortedTracks = new ArrayList<>(trackList);
-                    sortedTracks.sort((a, b) -> {
-                        int popCompare = Integer.compare(b.getPopularity(), a.getPopularity());
-                        if (popCompare != 0) return popCompare;
+                sortedTracks.sort((a, b) -> {
+                    int popCompare = 0;
+                    if("descending".equalsIgnoreCase(order)){
+                        popCompare = Integer.compare(b.getPopularity(), a.getPopularity());
+                    } else if("ascending".equalsIgnoreCase(order)){
+                        popCompare = Integer.compare(a.getPopularity(), b.getPopularity());
+                    }
 
-                        //artists alphabetical
-                        String artistA = a.getArtists().length > 0 ? a.getArtists()[0].getName() : "";
-                        String artistB = b.getArtists().length > 0 ? b.getArtists()[0].getName() : "";
-                        return artistA.compareToIgnoreCase(artistB);
-                    });
+                    if(popCompare != 0) return popCompare;
+
+                    // fallback to artist alphabetical
+                    String artistA = a.getArtists().length > 0 ? a.getArtists()[0].getName() : "";
+                    String artistB = b.getArtists().length > 0 ? b.getArtists()[0].getName() : "";
+                    return artistA.compareToIgnoreCase(artistB);
+                });
 
                 if(method.equals("preserve")){
                     for (int i = 0; i < sortedTracks.size(); i++) {
@@ -152,7 +158,12 @@ public class SortByPopularityService {
                     if(method.equals("new")){
                         GetPlaylistRequest getPlaylistRequest = spotifyApi.getPlaylist(playlistLink).build();
                         Playlist playlist = getPlaylistRequest.execute();
-                        String playlistName = playlist.getName() + " - sorted by popularity descending";
+                        String playlistName = "";
+                        if(order.equals("descending")){
+                            playlistName = playlist.getName() + " - sorted by popularity descending";
+                        }else{
+                            playlistName = playlist.getName() + " - sorted by popularity ascending";
+                        }
                         String playlistDesc = playlist.getDescription();
                         Boolean playlistPublic = playlist.getIsPublicAccess();
                         Boolean playlistCollab = playlist.getIsCollaborative();

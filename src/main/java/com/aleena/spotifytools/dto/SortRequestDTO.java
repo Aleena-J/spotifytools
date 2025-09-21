@@ -5,6 +5,7 @@ import lombok.Data;
 public class SortRequestDTO {
     private String playlistLink;
     private String method;
+    private String order;
 
     public String getPlaylistLink() {
         return playlistLink;
@@ -18,6 +19,13 @@ public class SortRequestDTO {
     }
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String getOrder(){
+        return this.order;
+    }
+    public void setOrder(String order){
+        this.order = order;
     }
 }
 
