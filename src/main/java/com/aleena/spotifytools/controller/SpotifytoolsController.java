@@ -78,8 +78,8 @@ public class SpotifytoolsController {
         cookie.setAttribute("SameSite", "None");
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("Set-Cookie", "userId=" + userId + "; Max-Age=86400; Path=/; Secure; SameSite=None");
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @GetMapping("users-playlists")
