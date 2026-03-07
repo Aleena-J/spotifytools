@@ -7,7 +7,7 @@ function Callback() {
         const code = params.get("code");
 
         if (code) {
-            fetch("https://spotifytools.onrender.com/callback", {
+            fetch("https://spotifytools-ver.vercel.app/callback", {
                 method: "POST",
                 credentials: "include",
                 headers: {
