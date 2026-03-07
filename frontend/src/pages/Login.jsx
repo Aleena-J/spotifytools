@@ -14,7 +14,7 @@ function Login() {
     }, [loading, isLoggedIn]);
 
     useEffect(() => {
-        const login = Cookies.get('userId');
+        const login = localStorage.getItem('userId');
         if(login === "noID" || login == undefined){
             setLogIn(false)
             setLoading(false);
@@ -26,7 +26,10 @@ function Login() {
 
     const getSpotifyLogin = () => {
         fetch("https://spotifytools.onrender.com/login", {
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "userId": localStorage.getItem("userId")
+            }
         })
         .then(res => res.text())
         .then(authUrl => {

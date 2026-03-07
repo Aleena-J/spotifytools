@@ -6,19 +6,19 @@ function Callback() {
         const params = new URLSearchParams(window.location.search);
         const code = params.get("code");
 
-        if (code) {
-            fetch("https://spotifytools.onrender.com/callback", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "text/plain"
-                },
-                body: code
-            })
-            .then(() => {
-                window.location.replace("/");
-            });
-        } else {
+    if (code) {
+        fetch("https://spotifytools.onrender.com/callback", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "text/plain" },
+            body: code
+        })
+        .then(res => res.text())
+        .then(userId => {
+            localStorage.setItem("userId", userId);
+            window.location.replace("/");
+        });
+    } else {
             window.location.replace("/");
         }
     }, []);

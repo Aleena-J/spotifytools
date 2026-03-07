@@ -91,7 +91,7 @@ function UserRepeats() {
     }, [loading, isLoggedIn]);
 
     useEffect(() => {
-        const login = Cookies.get('userId');
+        const login = localStorage.getItem('userId');
         if (login === "noID" || login == undefined) {
             setLogIn(false);
             setLoading(false);
@@ -102,7 +102,10 @@ function UserRepeats() {
             const loadUserRepeats = async () => {
                 try {
                     const res = await fetch("https://spotifytools.onrender.com/repeats", {
-                        credentials: "include"
+                        credentials: "include",
+                        headers: {
+                            "userId": localStorage.getItem("userId")
+                        }
                     });
                     const data = await res.json();
                     const sortedNewData = [...data].sort((a, b) => b.repeats - a.repeats);
@@ -139,6 +142,7 @@ function UserRepeats() {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
+                "userId": localStorage.getItem("userId")
             },
             body: JSON.stringify({
                 period: period,
@@ -169,6 +173,7 @@ function UserRepeats() {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
+                "userId": localStorage.getItem("userId")
             },
                 body: uri
         });

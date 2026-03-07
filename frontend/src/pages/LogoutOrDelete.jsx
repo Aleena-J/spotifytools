@@ -13,7 +13,7 @@ function LogoutOrDelete() {
     }, [loading, isLoggedIn]);
 
     useEffect(() => {
-        const login = Cookies.get('userId');
+        const login = localStorage.getItem('userId');
         if(login === "noID" || login == undefined){
             setLogIn(false)
             setLoading(false)
@@ -26,21 +26,24 @@ function LogoutOrDelete() {
     const deleteAccount = async () => {
         const res = await fetch("https://spotifytools.onrender.com/delete-account", {
             method: "DELETE",
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "userId": localStorage.getItem("userId")
+            }
         });
         const data = await res.text();
         if(data === "User not found"){
             alert("Error with deletion, user not found")
         }else if(data === "Deletion successful"){
             alert("Deletion successful")
-            Cookies.remove('userId');
+            localStorage.removeItem('userId');
             setLogIn(false)
             window.location.replace("/");
         }
     };
 
     const logout = () => {
-        Cookies.remove('userId');
+        localStorage.removeItem('userId');
         setLogIn(false)
         window.location.replace("/");
     };

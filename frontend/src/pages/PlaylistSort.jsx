@@ -19,7 +19,7 @@ function PlaylistSort(){
     }, [loading, isLoggedIn]);
 
     useEffect(() =>{
-        const login = Cookies.get('userId');
+        const login = localStorage.getItem('userId');
         if (login === "noID" || login == undefined) {
             setLogIn(false);
             setLoading(false);
@@ -30,7 +30,10 @@ function PlaylistSort(){
             const loadUserPlaylists = async () => {
                 try {
                     const res = await fetch("https://spotifytools.onrender.com/users-playlists", {
-                        credentials: "include"
+                        credentials: "include",
+                        headers: {
+                            "userId": localStorage.getItem("userId")
+                        }
                     });
                     const data = await res.json();
                     setPlaylists(data);
@@ -69,7 +72,8 @@ function PlaylistSort(){
                         method: "POST",
                         credentials: "include",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "userId": localStorage.getItem("userId")
                         },
                         body: JSON.stringify({
                         playlistLink: playlistID,

@@ -7,7 +7,7 @@ function Home() {
     const [isLoggedIn, setLogIn] = useState(false);
     
     useEffect(() => {
-        const login = Cookies.get('userId');
+        const login = localStorage.getItem('userId');
         if(login === "noID" || login == undefined){
             setLogIn(false)
         }else{

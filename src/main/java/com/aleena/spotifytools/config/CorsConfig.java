@@ -15,7 +15,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                     .allowedOrigins("https://spotifytools-ver.vercel.app")
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                    .allowedHeaders("*")
+                    .allowedHeaders("*", "userId")
                     .allowCredentials(true);
             }
         };

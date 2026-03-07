@@ -2,8 +2,7 @@ package com.aleena.spotifytools.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,6 @@ import com.aleena.spotifytools.service.RedirectService;
 import com.aleena.spotifytools.service.SkippedSongsTrackService;
 import com.aleena.spotifytools.service.SortByPopularityService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 import se.michaelthelin.spotify.SpotifyApi;
@@ -66,41 +64,42 @@ public class SpotifytoolsController {
     }
 
     @PostMapping("/callback")
-    public void getUserDetails(@RequestBody String code, HttpServletResponse response) throws IOException{
+    public String getUserDetails(@RequestBody String code, HttpServletResponse response) throws IOException{
         String userCode = code;
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         String userId = redirectService.getDetails(userCode, spotifyApi);
         response.setHeader("Set-Cookie", "userId=" + userId + "; Max-Age=86400; Path=/; Secure; SameSite=None");
         response.setStatus(HttpServletResponse.SC_OK);
+        return userId;
     }
 
     @GetMapping("users-playlists")
-    public List<PlaylistDTO> getUsersPlaylists(@CookieValue(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
+    public List<PlaylistDTO> getUsersPlaylists(@RequestHeader(value = "userId", defaultValue = "noID") String userId, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return playlistsService.getUsersPlaylists(spotifyApi, userId);
     }
     
 
     @PostMapping("sort-playlist-popularity")
-    public String sortStatus(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody SortRequestDTO request, HttpServletResponse response) throws IOException{
+    public String sortStatus(@RequestHeader(value = "userId", defaultValue = "noID") String userId, @RequestBody SortRequestDTO request, HttpServletResponse response) throws IOException{
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return sortByPopularityService.sortByPop(spotifyApi, userId, request.getPlaylistLink(), request.getMethod(), request.getOrder());
     }
 
     @GetMapping("repeats")
-    public List<SongDTO> getUserRepeats(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+    public List<SongDTO> getUserRepeats(@RequestHeader(value = "userId", defaultValue = "noID") String userId) {
         return repeatsService.repeats(userId);
     }
 
     
     @DeleteMapping("delete-account")
-    public String deleteUser(@CookieValue(value = "userId", defaultValue = "noID") String userId) throws IOException{
+    public String deleteUser(@RequestHeader(value = "userId", defaultValue = "noID") String userId) throws IOException{
         return deleteUserService.deleteUser(userId);
     }
     
     
     @PostMapping("create-repeat-playlist")
-    public String postMethodName(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody PlaylistCreateDTO request) {
+    public String postMethodName(@RequestHeader(value = "userId", defaultValue = "noID") String userId, @RequestBody PlaylistCreateDTO request) {
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         String period = request.getPeriod();
         List<SongDTO> songs = request.getSongs();
@@ -108,18 +107,18 @@ public class SpotifytoolsController {
     }
 
     @PostMapping("add-to-queue")
-    public String postMethodName(@CookieValue(value = "userId", defaultValue = "noID") String userId, @RequestBody String uri) {
+    public String postMethodName(@RequestHeader(value = "userId", defaultValue = "noID") String userId, @RequestBody String uri) {
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return queueService.addToQueue(spotifyApi, userId, uri);
     }
     
      @GetMapping("skips")
-    public String getUserSkips(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+    public String getUserSkips(@RequestHeader(value = "userId", defaultValue = "noID") String userId) {
         return new String();
     }
 
     @PostMapping("track-skip")
-    public String trackUserSkip(@CookieValue(value = "userId", defaultValue = "noID") String userId) {
+    public String trackUserSkip(@RequestHeader(value = "userId", defaultValue = "noID") String userId) {
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         return skippedSongsTrackService.trackSkip(spotifyApi, userId);
     }
