@@ -19,7 +19,7 @@ function Callback() {
                 window.location.replace("/");
             });
         } else {
-             window.location.href("/");
+            window.location.replace("/");
         }
     }, []);
     

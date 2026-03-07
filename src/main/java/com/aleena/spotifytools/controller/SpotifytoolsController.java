@@ -34,7 +34,7 @@ import se.michaelthelin.spotify.SpotifyApi;
 
 
 @RestController
-@CrossOrigin(origins = "https://spotifytools-ver.vercel.app/", allowCredentials = "true")
+@CrossOrigin(origins = "https://spotifytools-ver.vercel.app", allowCredentials = "true")
 public class SpotifytoolsController {
     @Autowired
     private SpotifyConfig spotifyConfig;
@@ -74,8 +74,9 @@ public class SpotifytoolsController {
         Cookie cookie = new Cookie("userId", userId);
         cookie.setHttpOnly(false);
         //TODO: SET TRUE
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "None");
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
