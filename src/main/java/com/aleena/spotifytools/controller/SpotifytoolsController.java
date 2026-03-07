@@ -34,7 +34,7 @@ import se.michaelthelin.spotify.SpotifyApi;
 
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5173", allowCredentials = "true")
+@CrossOrigin(origins = "https://spotifytools-ver.vercel.app/", allowCredentials = "true")
 public class SpotifytoolsController {
     @Autowired
     private SpotifyConfig spotifyConfig;
