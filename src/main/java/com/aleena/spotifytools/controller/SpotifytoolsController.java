@@ -70,14 +70,6 @@ public class SpotifytoolsController {
         String userCode = code;
         SpotifyApi spotifyApi = spotifyConfig.spotifyApi();
         String userId = redirectService.getDetails(userCode, spotifyApi);
-        Cookie cookie = new Cookie("userId", userId);
-        cookie.setHttpOnly(false);
-        //TODO: SET TRUE
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setAttribute("SameSite", "None");
-        cookie.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookie);
         response.setHeader("Set-Cookie", "userId=" + userId + "; Max-Age=86400; Path=/; Secure; SameSite=None");
         response.setStatus(HttpServletResponse.SC_OK);
     }
