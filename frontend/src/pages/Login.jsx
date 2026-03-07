@@ -25,7 +25,7 @@ function Login() {
     }, []);
 
     const getSpotifyLogin = () => {
-        fetch("http://127.0.0.1:8080/login", {
+        fetch("https://spotifytools.onrender.com/login", {
             credentials: "include"
         })
         .then(res => res.text())

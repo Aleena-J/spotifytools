@@ -24,7 +24,7 @@ function LogoutOrDelete() {
     }, []);
 
     const deleteAccount = async () => {
-        const res = await fetch("http://127.0.0.1:8080/delete-account", {
+        const res = await fetch("https://spotifytools.onrender.com/delete-account", {
             method: "DELETE",
             credentials: "include"
         });

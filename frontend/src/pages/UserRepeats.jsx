@@ -101,7 +101,7 @@ function UserRepeats() {
 
             const loadUserRepeats = async () => {
                 try {
-                    const res = await fetch("http://127.0.0.1:8080/repeats", {
+                    const res = await fetch("https://spotifytools.onrender.com/repeats", {
                         credentials: "include"
                     });
                     const data = await res.json();
@@ -134,7 +134,7 @@ function UserRepeats() {
 
     const createRepeatPlaylist = async (period, songs) => {
         setIsCreating(true);
-        const res = await fetch("http://127.0.0.1:8080/create-repeat-playlist", {
+        const res = await fetch("https://spotifytools.onrender.com/create-repeat-playlist", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -164,7 +164,7 @@ function UserRepeats() {
     const addToQueue = async (uri) => {
         setIsAdding(true);
         setCurrentAdd(uri);
-        const res = await fetch("http://127.0.0.1:8080/add-to-queue", {
+        const res = await fetch("https://spotifytools.onrender.com/add-to-queue", {
             method: "POST",
             credentials: "include",
             headers: {

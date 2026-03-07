@@ -29,7 +29,7 @@ function PlaylistSort(){
 
             const loadUserPlaylists = async () => {
                 try {
-                    const res = await fetch("http://127.0.0.1:8080/users-playlists", {
+                    const res = await fetch("https://spotifytools.onrender.com/users-playlists", {
                         credentials: "include"
                     });
                     const data = await res.json();
@@ -65,7 +65,7 @@ function PlaylistSort(){
         try {
             const method = selectedMethods[playlistID];
             const order = selectedAscDesc[playlistID];
-            const res = await fetch("http://127.0.0.1:8080/sort-playlist-popularity", {
+            const res = await fetch("https://spotifytools.onrender.com/sort-playlist-popularity", {
                         method: "POST",
                         credentials: "include",
                         headers: {

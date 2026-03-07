@@ -7,7 +7,7 @@ function Callback() {
         const code = params.get("code");
 
         if (code) {
-            fetch("http://127.0.0.1:8080/callback", {
+            fetch("https://spotifytools.onrender.com/callback", {
                 method: "POST",
                 credentials: "include",
                 headers: {
