@@ -54,6 +54,10 @@ public class SpotifytoolsController {
     @Autowired
     private AddToQueueService queueService;
 
+    @GetMapping("health")
+    public String healthCheck(){
+        return "ok";
+    }
 
     //TODO: what to do in case of "noID"
     @GetMapping("/login")
