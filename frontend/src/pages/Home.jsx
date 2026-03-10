@@ -17,6 +17,8 @@ function Home() {
 
     return (
         <div className="welcome-body">
+            <br></br>
+            <hr></hr>
             <p>3/9/2026 - As I am not currently paying for Spotify Premium, I no longer have access to the Spotify Web API, making this website nonfunctional</p>
             <p>Below is a video demo of some of the website features in action</p>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/Fa05ZBFatwk?si=k8GsRkuHCu-bnXTI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
